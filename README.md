@@ -11,7 +11,9 @@ Web-API server for ElectricalContactResistance mobile game
 
 ## Core
 * .NET Core 8.0
-* MS SQL Server 2022, SQLite
+* Databases:
+  * MS SQL Server 2022,
+  * MongoDB 7.0.7
 * Docker + docker-compose.override
 * Swagger
 * OAuth 2.0, JWT
