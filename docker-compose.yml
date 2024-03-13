@@ -3,6 +3,9 @@
   usersdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
     
+  configsdb:
+    image: mongo
+    
   infrastructure-identity:
     image: infrastructure-identity
     build:
@@ -20,3 +23,6 @@
     build:
       context: .
       dockerfile: Services/UserManagement/UserManagement.WebApi/Dockerfile
+
+volumes:
+  mongo_data:

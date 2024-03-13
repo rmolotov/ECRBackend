@@ -8,11 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\RemoteConfig.Application\RemoteConfig.Application.csproj" />
       <ProjectReference Include="..\RemoteConfig.Core\RemoteConfig.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+      <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
+        <PackageReference Include="MongoDB.EntityFrameworkCore" Version="7.0.0-preview.1" />
     </ItemGroup>
 
 </Project>

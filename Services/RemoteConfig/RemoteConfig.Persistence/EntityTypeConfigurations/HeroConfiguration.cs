@@ -9,9 +9,9 @@ public class HeroConfiguration : IEntityTypeConfiguration<Hero>
     public void Configure(EntityTypeBuilder<Hero> builder)
     {
         builder
-            .HasKey(note => note.Id);
+            .HasKey(hero => hero.Id);
         builder
-            .HasIndex(note => note.Id)
+            .HasIndex(hero => hero.Id)
             .IsUnique();
         builder
             .Property(hero => hero.Capacity);

@@ -8,11 +8,24 @@
     healthcheck:
       test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
       interval: 10s
-      timeout: 3s
-      retries: 10
+      timeout: 10s
+      retries: 5
       start_period: 10s
     ports:
       - "1433:1433"
+    
+  configsdb:
+    restart: always
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
     
   infrastructure-identity:
     environment:
@@ -38,7 +51,11 @@
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:5003
     depends_on: 
-      - infrastructure-identity
-      - usermanagement-webapi
+      configsdb:
+          condition: service_healthy
+      infrastructure-identity:
+        condition: service_started
+      usermanagement-webapi:
+        condition: service_started
     ports:
       - "5003:5003"
