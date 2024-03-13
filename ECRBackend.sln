@@ -6,10 +6,15 @@ EndProject
 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C3FFD898-F4A7-41F8-B697-B28D3D448964}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{BE100FDC-1768-4215-BF5F-7D18D8A9C808}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{7651218A-92C4-4A62-B76A-B86A5A4E95CD}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity", "Infrastructure\Identity\Identity.csproj", "{3F85FF7B-3776-4112-85F2-CC126EFA11DE}"
 EndProject
 
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{BE100FDC-1768-4215-BF5F-7D18D8A9C808}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{E6CD020E-75ED-49DC-83D4-BBC4FF1A1015}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.WebApi", "Services\UserManagement\UserManagement.WebApi\UserManagement.WebApi.csproj", "{B72A512E-AC7D-45EA-A6E2-387F48199A6E}"
 EndProject
@@ -19,17 +24,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Core", "Serv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Application", "Services\UserManagement\UserManagement.Application\UserManagement.Application.csproj", "{3D40E92E-C9AF-42EC-8B73-B1E2ACAB666F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{7651218A-92C4-4A62-B76A-B86A5A4E95CD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{E6CD020E-75ED-49DC-83D4-BBC4FF1A1015}"
-EndProject
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RemoteConfig", "RemoteConfig", "{A818E1DB-EF50-4BDB-9926-C212F91566D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteConfig.Core", "Services\RemoteConfig.Core\RemoteConfig.Core.csproj", "{76FA0269-D7D5-4F6C-983D-6D4A98870E6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteConfig.Core", "Services\RemoteConfig\RemoteConfig.Core\RemoteConfig.Core.csproj", "{76FA0269-D7D5-4F6C-983D-6D4A98870E6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteConfig.Application", "Services\RemoteConfig.Application\RemoteConfig.Application.csproj", "{20AF63A2-8736-4091-96C7-1D676D424835}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteConfig.Application", "Services\RemoteConfig\RemoteConfig.Application\RemoteConfig.Application.csproj", "{20AF63A2-8736-4091-96C7-1D676D424835}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteConfig.Persistence", "Services\RemoteConfig.Persistence\RemoteConfig.Persistence.csproj", "{DCD1F6D9-9130-4C5F-B80F-E61F3929A02F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteConfig.Persistence", "Services\RemoteConfig\RemoteConfig.Persistence\RemoteConfig.Persistence.csproj", "{DCD1F6D9-9130-4C5F-B80F-E61F3929A02F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteConfig.WebApi", "Services\RemoteConfig\RemoteConfig.WebApi\RemoteConfig.WebApi.csproj", "{1D3E2882-C259-4173-B401-3145D6C656AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +97,10 @@ Global
 		{DCD1F6D9-9130-4C5F-B80F-E61F3929A02F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCD1F6D9-9130-4C5F-B80F-E61F3929A02F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCD1F6D9-9130-4C5F-B80F-E61F3929A02F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D3E2882-C259-4173-B401-3145D6C656AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D3E2882-C259-4173-B401-3145D6C656AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D3E2882-C259-4173-B401-3145D6C656AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D3E2882-C259-4173-B401-3145D6C656AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7651218A-92C4-4A62-B76A-B86A5A4E95CD} = {C3FFD898-F4A7-41F8-B697-B28D3D448964}
@@ -106,5 +114,6 @@ Global
 		{76FA0269-D7D5-4F6C-983D-6D4A98870E6A} = {A818E1DB-EF50-4BDB-9926-C212F91566D9}
 		{20AF63A2-8736-4091-96C7-1D676D424835} = {A818E1DB-EF50-4BDB-9926-C212F91566D9}
 		{DCD1F6D9-9130-4C5F-B80F-E61F3929A02F} = {A818E1DB-EF50-4BDB-9926-C212F91566D9}
+		{1D3E2882-C259-4173-B401-3145D6C656AA} = {A818E1DB-EF50-4BDB-9926-C212F91566D9}
 	EndGlobalSection
 EndGlobal
