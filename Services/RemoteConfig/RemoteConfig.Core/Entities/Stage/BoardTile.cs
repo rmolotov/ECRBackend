@@ -1,4 +1,4 @@
-namespace RemoteConfig.Core.Entities.Stages;
+namespace RemoteConfig.Core.Entities.Stage;
 
 public class BoardTile
 {

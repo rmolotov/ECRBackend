@@ -2,10 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MongoDB.EntityFrameworkCore.Extensions;
 using RemoteConfig.Application.Interfaces;
-using RemoteConfig.Core.Entities.Enemies;
+using RemoteConfig.Core.Entities.Enemy;
 using RemoteConfig.Core.Entities.Hero;
 using RemoteConfig.Core.Entities.Inventory;
-using RemoteConfig.Core.Entities.Stages;
+using RemoteConfig.Core.Entities.Stage;
 using RemoteConfig.Persistence.EntityTypeConfigurations;
 
 namespace RemoteConfig.Persistence.Database;

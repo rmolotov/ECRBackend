@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using RemoteConfig.Core.Entities.Enemies;
+using RemoteConfig.Core.Entities.Enemy;
 using RemoteConfig.Core.Entities.Hero;
 using RemoteConfig.Core.Entities.Inventory;
-using RemoteConfig.Core.Entities.Stages;
+using RemoteConfig.Core.Entities.Stage;
 
 namespace RemoteConfig.Application.Interfaces;
 

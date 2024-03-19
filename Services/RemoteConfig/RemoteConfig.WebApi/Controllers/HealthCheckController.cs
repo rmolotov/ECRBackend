@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace RemoteConfig.WebApi.Controllers;
 
 [ApiController]
+[ApiExplorerSettings(IgnoreApi=true)]
 [Route("[controller]")]
 [AllowAnonymous]
 public class HealthCheckController : ControllerBase

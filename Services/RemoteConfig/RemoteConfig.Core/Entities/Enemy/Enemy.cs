@@ -1,4 +1,4 @@
-namespace RemoteConfig.Core.Entities.Enemies;
+namespace RemoteConfig.Core.Entities.Enemy;
 
 public class Enemy : BaseEntity
 {
