@@ -1,5 +1,4 @@
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RemoteConfig.Application.Heroes.Responses;
@@ -13,9 +12,8 @@ public class GetNHeroesListQueryHandler(IRemoteConfigContext dbContext, IMapper 
     public async Task<IList<GetHeroResponse>> Handle(GetHeroesListQuery request, CancellationToken cancellationToken)
     {
         var list = await dbContext.Heroes
-            .ProjectTo<GetHeroResponse>(mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
-
-        return list;
+        
+        return mapper.Map<IList<GetHeroResponse>>(list);
     }
 }
