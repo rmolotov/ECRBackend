@@ -31,6 +31,11 @@
             <option name="type" value="afterPreviousStarted" />
           </ConditionSnapshot>
         </option>
+        <option name="executable">
+          <ExecutableSnapshot>
+            <option name="id" value="runConfig:.NET Launch Settings Profile.RemoteConfig.WebApi: https" />
+          </ExecutableSnapshot>
+        </option>
       </ExecutableRowSnapshot>
     </rows>
     <method v="2" />
