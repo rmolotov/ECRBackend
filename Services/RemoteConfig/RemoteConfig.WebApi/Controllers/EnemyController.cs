@@ -2,6 +2,9 @@ using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RemoteConfig.Application.Enemies.Commands.CreateEnemy;
+using RemoteConfig.Application.Enemies.Commands.DeleteEnemy;
+using RemoteConfig.Application.Enemies.Commands.UpdateEnemy;
 using RemoteConfig.Application.Enemies.Queries;
 using RemoteConfig.Application.Enemies.Responses;
 
@@ -31,5 +34,36 @@ public class EnemyController(IMapper mapper) : BaseController
         var response = await Mediator.Send(query);
 
         return Ok(response);
+    }
+    
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost]
+    public async Task<ActionResult<Guid>> CreateEnemy([FromBody] CreateEnemyCommand command)
+    {
+        var id = await Mediator.Send(command);
+
+        return Created($"[/api/enemy/{id}]", id);
+    }
+    
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPut]
+    public async Task<ActionResult> UpdateEnemy([FromBody] UpdateEnemyCommand command)
+    {
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpDelete]
+    public async Task<ActionResult> DeleteEnemy([FromBody] string id)
+    {
+        var command = new DeleteEnemyCommand() { Id = id };
+        await Mediator.Send(command);
+
+        return NoContent();
     }
 }
