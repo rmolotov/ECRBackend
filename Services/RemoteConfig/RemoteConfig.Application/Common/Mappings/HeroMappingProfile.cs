@@ -1,5 +1,4 @@
 using AutoMapper;
-using RemoteConfig.Application.Heroes.Commands;
 using RemoteConfig.Application.Heroes.Responses;
 using RemoteConfig.Core.Entities.Hero;
 
