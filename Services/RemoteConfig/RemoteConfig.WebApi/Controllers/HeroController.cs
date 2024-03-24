@@ -2,7 +2,9 @@ using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RemoteConfig.Application.Heroes.Commands;
+using RemoteConfig.Application.Heroes.Commands.CreateHero;
+using RemoteConfig.Application.Heroes.Commands.DeleteHero;
+using RemoteConfig.Application.Heroes.Commands.UpdateHero;
 using RemoteConfig.Application.Heroes.Queries;
 using RemoteConfig.Application.Heroes.Responses;
 
@@ -42,5 +44,26 @@ public class HeroController(IMapper mapper) : BaseController
         var id = await Mediator.Send(command);
 
         return Created($"[/api/heroes/{id}]", id);
+    }
+    
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPut]
+    public async Task<ActionResult> UpdateHero([FromBody] UpdateHeroCommand command)
+    {
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpDelete]
+    public async Task<ActionResult> DeleteHero([FromBody] string id)
+    {
+        var command = new DeleteHeroCommand { Id = id };
+        await Mediator.Send(command);
+
+        return NoContent();
     }
 }

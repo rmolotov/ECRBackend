@@ -2,7 +2,7 @@ using MediatR;
 using RemoteConfig.Application.Interfaces;
 using RemoteConfig.Core.Entities.Hero;
 
-namespace RemoteConfig.Application.Heroes.Commands;
+namespace RemoteConfig.Application.Heroes.Commands.CreateHero;
 
 public class CreateHeroCommandHandler(IRemoteConfigContext dbContext) : IRequestHandler<CreateHeroCommand, string>
 {

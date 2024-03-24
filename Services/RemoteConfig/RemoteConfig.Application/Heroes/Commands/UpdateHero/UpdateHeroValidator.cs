@@ -1,10 +1,10 @@
 using FluentValidation;
 
-namespace RemoteConfig.Application.Heroes.Commands;
+namespace RemoteConfig.Application.Heroes.Commands.UpdateHero;
 
-public class CreateHeroCommandValidator : AbstractValidator<CreateHeroCommand>
+public class UpdateHeroValidator : AbstractValidator<UpdateHeroCommand>
 {
-    public CreateHeroCommandValidator()
+    public UpdateHeroValidator()
     {
         RuleFor(command => command.Id)
             .NotEmpty()
