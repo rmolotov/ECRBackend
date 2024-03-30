@@ -10,12 +10,12 @@ public class CreateHeroCommandValidator : AbstractValidator<CreateHeroCommand>
             .NotEmpty()
             .MaximumLength(64);
         RuleFor(command => command.Resistance)
-            .NotEqual(0);
+            .GreaterThan(0);
         RuleFor(command => command.Capacity)
-            .NotEqual(0);
+            .GreaterThan(0);
         RuleFor(command => command.Current)
-            .NotEqual(0);
+            .GreaterThan(0);
         RuleFor(command => command.Voltage)
-            .NotEqual(0);
+            .GreaterThan(0);
     }
 }
