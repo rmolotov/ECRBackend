@@ -1,10 +1,10 @@
 using FluentValidation;
 
-namespace RemoteConfig.Application.InventoryItems.Commands.CreateInventoryItem;
+namespace RemoteConfig.Application.InventoryItems.Commands.UpdateInventoryItem;
 
-public class CreateInventoryItemCommandValidator : AbstractValidator<CreateInventoryItemCommand>
+public class UpdateInventoryItemCommandValidator : AbstractValidator<UpdateInventoryItemCommand>
 {
-    public CreateInventoryItemCommandValidator()
+    public UpdateInventoryItemCommandValidator()
     {
         RuleFor(command => command.Id)
             .NotNull()

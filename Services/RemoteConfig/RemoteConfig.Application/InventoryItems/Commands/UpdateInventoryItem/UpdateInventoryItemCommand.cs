@@ -1,8 +1,8 @@
 using MediatR;
 
-namespace RemoteConfig.Application.InventoryItems.Commands.CreateInventoryItem;
+namespace RemoteConfig.Application.InventoryItems.Commands.UpdateInventoryItem;
 
-public class CreateInventoryItemCommand : IRequest<string>
+public class UpdateInventoryItemCommand : IRequest
 {
     public string Id { get; set; }
     public string Title { get; set; }
