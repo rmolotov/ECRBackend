@@ -1,7 +1,11 @@
-namespace RemoteConfig.Core.Entities.Stage;
+using MediatR;
+using RemoteConfig.Core.Entities.Stage;
 
-public class Stage : BaseEntity
+namespace RemoteConfig.Application.Stages.Commands.UpdateStage;
+
+public class UpdateStageCommand : IRequest
 {
+    public string Id { get; set; }
     public string StageTitle { get; set; }
     public string StageDescription { get; set; }
 

@@ -18,7 +18,6 @@ public class UpdateInventoryItemCommandHandler(IRemoteConfigContext dbContext, I
         if (entity == null)
             throw new NotFoundException(nameof(InventoryItem), request.Id);
 
-        entity.Id          = request.Id;
         entity.Title       = request.Title;
         entity.Description = request.Description;
         entity.MaxCount    = request.MaxCount;
