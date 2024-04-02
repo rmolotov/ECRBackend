@@ -21,8 +21,8 @@ public class UpdateEnemyCommandHandler(IRemoteConfigContext dbContext) : IReques
         entity.Resistance = request.Resistance;
         entity.Voltage    = request.Voltage;
 
-        entity.EnemyType  = request.EnemyType;
-        entity.AttackType = request.AttackType;
+        entity.EnemyType  = Enum.Parse<EnemyType>(request.EnemyType);
+        entity.AttackType = Enum.Parse<AttackType>(request.AttackType);
         
         await dbContext.SaveChangesAsync(cancellationToken);
     }

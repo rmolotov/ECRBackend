@@ -1,4 +1,5 @@
 using FluentValidation;
+using RemoteConfig.Core.Entities.Enemy;
 
 namespace RemoteConfig.Application.Enemies.Commands.UpdateEnemy;
 
@@ -18,10 +19,9 @@ public class UpdateEnemyCommandValidator : AbstractValidator<UpdateEnemyCommand>
         RuleFor(command => command.Voltage)
             .GreaterThan(0);
 
-        // todo
-        // RuleFor(command => command.AttackType)
-        //     .IsEnumName();
-        // RuleFor(command => command.EnemyType)
-        //     .IsEnumName();
+        RuleFor(command => command.AttackType)
+            .IsEnumName(typeof(AttackType), caseSensitive: false);
+        RuleFor(command => command.EnemyType)
+            .IsEnumName(typeof(EnemyType), caseSensitive: false);
     }
 }

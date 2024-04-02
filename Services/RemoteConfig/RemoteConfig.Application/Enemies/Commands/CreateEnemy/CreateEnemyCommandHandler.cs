@@ -12,13 +12,13 @@ public class CreateEnemyCommandHandler(IRemoteConfigContext dbContext) : IReques
         {
             Id = request.Id,
             
-            Capacity = request.Capacity,
-            Current = request.Current,
+            Capacity   = request.Capacity,
+            Current    = request.Current,
             Resistance = request.Resistance,
-            Voltage = request.Voltage,
+            Voltage    = request.Voltage,
             
-            EnemyType = request.EnemyType,
-            AttackType = request.AttackType
+            EnemyType  = Enum.Parse<EnemyType>(request.EnemyType),
+            AttackType = Enum.Parse<AttackType>(request.AttackType),
         };
 
         await dbContext.Enemies.AddAsync(enemy, cancellationToken);
