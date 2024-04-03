@@ -1,3 +1,4 @@
+using AutoMapper;
 using MediatR;
 using RemoteConfig.Application.Interfaces;
 using RemoteConfig.Core.Entities.Stage;
@@ -5,21 +6,11 @@ using RemoteConfig.Core.Entities.Stage;
 namespace RemoteConfig.Application.Stages.Commands.CreateStage;
 
 
-public class CreateStageQueryHandler(IRemoteConfigContext dbContext) : IRequestHandler<CreateStageCommand, string>
+public class CreateStageQueryHandler(IRemoteConfigContext dbContext, IMapper mapper) : IRequestHandler<CreateStageCommand, string>
 {
     public async Task<string> Handle(CreateStageCommand request, CancellationToken cancellationToken)
     {
-        var stage = new Stage()
-        {
-            Id = request.Id,
-            
-            StageTitle = request.StageTitle,
-            StageDescription = request.StageDescription,
-            
-            BoardTiles = request.BoardTiles,
-            PlayerSpawnPoint = request.PlayerSpawnPoint,
-            EnemySpawners = request.EnemySpawners,
-        };
+        var stage = mapper.Map<Stage>(request);
 
         await dbContext.Stages.AddAsync(stage, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

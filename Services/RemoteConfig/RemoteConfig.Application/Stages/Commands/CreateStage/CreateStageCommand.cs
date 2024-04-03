@@ -11,5 +11,5 @@ public class CreateStageCommand : IRequest<string>
 
     public List<decimal> PlayerSpawnPoint { get; set; }
     public List<EnemySpawner> EnemySpawners { get; set; }
-    public List<BoardTile> BoardTiles { get; set; }
+    public List<int[]> BoardTiles { get; set; }
 }

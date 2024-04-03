@@ -1,3 +1,4 @@
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RemoteConfig.Application.Common.Exceptions;
@@ -6,7 +7,7 @@ using RemoteConfig.Core.Entities.Stage;
 
 namespace RemoteConfig.Application.Stages.Commands.UpdateStage;
 
-public class UpdateStageCommandHandler(IRemoteConfigContext dbContext) : IRequestHandler<UpdateStageCommand>
+public class UpdateStageCommandHandler(IRemoteConfigContext dbContext, IMapper mapper) : IRequestHandler<UpdateStageCommand>
 {
     public async Task Handle(UpdateStageCommand request, CancellationToken cancellationToken)
     {
@@ -16,12 +17,14 @@ public class UpdateStageCommandHandler(IRemoteConfigContext dbContext) : IReques
         if (entity == null)
             throw new NotFoundException(nameof(Stage), request.Id);
 
-        entity.StageTitle       = request.StageTitle;
-        entity.StageDescription = request.StageDescription;
-        entity.BoardTiles       = request.BoardTiles;
-        entity.PlayerSpawnPoint = request.PlayerSpawnPoint;
-        entity.EnemySpawners    = request.EnemySpawners;
+        var edited = mapper.Map<Stage>(request);
         
+        entity.StageTitle       = edited.StageTitle;
+        entity.StageDescription = edited.StageDescription;
+        entity.BoardTiles       = edited.BoardTiles;
+        entity.PlayerSpawnPoint = edited.PlayerSpawnPoint;
+        entity.EnemySpawners    = edited.EnemySpawners;
+
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }
