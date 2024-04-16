@@ -14,6 +14,7 @@ namespace RemoteConfig.WebApi.Controllers;
 [AllowAnonymous]
 public class StageController(IMapper mapper) : BaseController
 {
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [HttpGet]
@@ -25,6 +26,7 @@ public class StageController(IMapper mapper) : BaseController
         return Ok(response);
     }
 
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [HttpGet("{id}")]
@@ -36,6 +38,7 @@ public class StageController(IMapper mapper) : BaseController
         return Ok(response);
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost]
@@ -46,6 +49,7 @@ public class StageController(IMapper mapper) : BaseController
         return Created($"[/api/stages/{id}]", id);
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPut]
@@ -56,6 +60,7 @@ public class StageController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpDelete]

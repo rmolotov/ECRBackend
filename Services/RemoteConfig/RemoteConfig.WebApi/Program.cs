@@ -1,5 +1,7 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using RemoteConfig.Application.Common.Mappings;
 using RemoteConfig.Application.DI;
 using RemoteConfig.Application.Interfaces;
@@ -49,6 +51,31 @@ builder.Services
     .AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>()
     .AddSwaggerGen();
 
+// Auth
+builder.Services
+    .AddAuthentication(config =>
+    {
+        config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = builder.Configuration.GetValue<string>("IdentityUri");
+        options.Audience = "ECR.Web";
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+    });
+builder.Services
+    .AddAuthorizationBuilder()
+    .AddPolicy("ApiScopePolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("scope", "ECR.Web");
+    });
+
 // Logging
 builder.Services
     .AddSingleton<ICurrentUserService, CurrentUserService>()
@@ -69,7 +96,9 @@ app
     })
     .UseRouting()
     .UseHttpsRedirection()
-    .UseCors("AllowAll");
+    .UseCors("AllowAll")
+    .UseAuthentication()
+    .UseAuthorization();
 
 app
     .MapControllers();

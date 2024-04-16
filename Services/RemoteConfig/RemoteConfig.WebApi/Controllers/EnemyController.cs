@@ -11,9 +11,9 @@ using RemoteConfig.Application.Enemies.Responses;
 namespace RemoteConfig.WebApi.Controllers;
 
 [ApiVersionNeutral]
-[AllowAnonymous]
 public class EnemyController(IMapper mapper) : BaseController
 {
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [HttpGet]
@@ -25,6 +25,7 @@ public class EnemyController(IMapper mapper) : BaseController
         return Ok(response);
     }
 
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [HttpGet("{id}")]
@@ -36,6 +37,7 @@ public class EnemyController(IMapper mapper) : BaseController
         return Ok(response);
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost]
@@ -46,6 +48,7 @@ public class EnemyController(IMapper mapper) : BaseController
         return Created($"[/api/enemy/{id}]", id);
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPut]
@@ -56,6 +59,7 @@ public class EnemyController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpDelete]
