@@ -6,6 +6,9 @@
   configsdb:
     image: mongo
     
+  cache:
+    image: redis
+    
   infrastructure-identity:
     image: infrastructure-identity
     build:

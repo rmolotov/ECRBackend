@@ -27,6 +27,18 @@
     volumes:
       - mongo_data:/data/db
     
+  cache:
+    container_name: cache
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "6379:6379"
+    
   infrastructure-identity:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
