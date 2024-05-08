@@ -6,7 +6,6 @@ using RemoteConfig.Core.Entities.Enemy;
 using RemoteConfig.Core.Entities.Hero;
 using RemoteConfig.Core.Entities.Inventory;
 using RemoteConfig.Core.Entities.Stage;
-using RemoteConfig.Persistence.EntityTypeConfigurations;
 
 namespace RemoteConfig.Persistence.Database;
 
