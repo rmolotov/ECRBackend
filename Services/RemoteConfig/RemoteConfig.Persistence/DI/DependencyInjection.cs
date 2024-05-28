@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using RemoteConfig.Application.Interfaces;
+using RemoteConfig.Persistence.Caching;
 using RemoteConfig.Persistence.Database;
 
 namespace RemoteConfig.Persistence.DI;
@@ -20,9 +21,12 @@ public static class DependencyInjection
             .AddDbContext<RemoteConfigContext>(options => 
                 options.UseMongoDB(mongoClient, databaseName));
         services
-            .AddScoped<IRemoteConfigContext>(provider =>
-                provider.GetService<RemoteConfigContext>()
-            );
+            .AddScoped<IRemoteConfigContext, RemoteConfigContext>();
+
+        services
+            .AddMemoryCache()
+            .AddDistributedMemoryCache()
+            .AddSingleton<ICacheService, CacheService>();
         
         return services;
     }
