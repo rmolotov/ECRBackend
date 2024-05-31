@@ -17,13 +17,13 @@ public static class DependencyInjection
         var mongoClient = new MongoClient(connectionString);
 
         services
-            .AddDbContext<RemoteConfigContext>(options => 
-                options.UseMongoDB(mongoClient, databaseName));
+            .AddMemoryCache()
+            .AddDistributedMemoryCache();
+
         services
-            .AddScoped<IRemoteConfigContext>(provider =>
-                provider.GetService<RemoteConfigContext>()
-            );
-        
+            .AddDbContext<IRemoteConfigContext, RemoteConfigContext>(options => options
+                .UseMongoDB(mongoClient, databaseName));
+
         return services;
     }
 }
