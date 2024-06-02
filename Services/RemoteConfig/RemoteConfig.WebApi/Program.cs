@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using RemoteConfig.Application.Common.Mappings;
 using RemoteConfig.Application.DI;
 using RemoteConfig.Application.Interfaces;
+using RemoteConfig.Persistence.Caching;
 using RemoteConfig.Persistence.DI;
 using RemoteConfig.WebApi;
 using RemoteConfig.WebApi.Services;
@@ -76,9 +77,10 @@ builder.Services
         policy.RequireClaim("scope", "ECR.Web");
     });
 
-// Logging
+// Custom services
 builder.Services
     .AddSingleton<ICurrentUserService, CurrentUserService>()
+    .AddSingleton<ICacheService, CacheService>()
     .AddHttpContextAccessor();
 
 var app = builder.Build();

@@ -13,10 +13,14 @@ public static class DependencyInjection
             .AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
             .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
+
+            .AddTransient(
+                typeof(IPipelineBehavior<,>),
+                typeof(LoggingBehavior<,>))
             .AddTransient(
                 typeof(IPipelineBehavior<,>),
                 typeof(ValidatorBehavior<,>))
             .AddTransient(
-                typeof(IPipelineBehavior<,>),
-                typeof(LoggingBehavior<,>));
+                typeof(IPipelineBehavior<,>), 
+                typeof(CachingBehavior<,>));
 }
