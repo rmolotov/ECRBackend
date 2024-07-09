@@ -1,43 +1,35 @@
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using RemoteConfig.Application.Interfaces;
+using RemoteConfig.Persistence.Caching.Extensions;
+using RemoteConfig.Persistence.Caching.Providers;
 
 namespace RemoteConfig.Persistence.Caching;
 
-public class CacheService(IMemoryCache memoryCache, IDistributedCache distributedCache) : ICacheService
+public class CacheService : ICacheService
 {
-    private const int MEMORY_CACHE_LIFETIME_SECONDS = 10;
-    
-    public async Task<T?> GetAsync<T>(string key, CancellationToken token = default) where T : class
+    private readonly ICacheProvider _head;
+    private readonly ICacheProvider _tail;
+
+    public CacheService(CacheConfigurationExpression configurationExpression)
     {
-        memoryCache.TryGetValue<T>(key, out var inMemoryValue);
-        if (inMemoryValue != null)
-            return inMemoryValue;
+        var providers = configurationExpression.Providers.ToArray();
         
-        var inDisturbedValue = await distributedCache.GetStringAsync(key, token);
+        _head = providers[0];
+        _tail = providers[^1];
+        _head.Successor = _tail;
         
-        if (inDisturbedValue != null)
-            memoryCache.Set(
-                key: key,
-                value: JsonConvert.DeserializeObject<T>(inDisturbedValue),
-                absoluteExpiration: DateTimeOffset.UtcNow.AddSeconds(MEMORY_CACHE_LIFETIME_SECONDS)
-            );
+        if (providers.Length < 2)
+            return;
 
-        return inDisturbedValue == null
-            ? null
-            : JsonConvert.DeserializeObject<T>(inDisturbedValue);
+        for (var i = 0; i < providers.Length - 1; i++) 
+            providers[i].Successor = providers[i + 1];
     }
 
-    public async Task SetAsync<T>(string key, T value, CancellationToken token = default) where T : class
-    {
-        var serialized = JsonConvert.SerializeObject(value);
-        await distributedCache.SetStringAsync(key, serialized, token);
-    }
+    public async Task<T?> GetAsync<T>(string key, CancellationToken token = default) where T : class => 
+        await _head.GetAsync<T>(key, token);
 
-    public async Task RemoveAsync(string key, CancellationToken token = default)
-    {
-        memoryCache.Remove(key);
-        await distributedCache.RemoveAsync(key, token);
-    }
+    public async Task SetAsync<T>(string key, T value, CancellationToken token = default) where T : class => 
+        await _tail.SetAsync(key, value, token);
+
+    public async Task RemoveAsync(string key, CancellationToken token = default) => 
+        await _head.RemoveAsync(key, token);
 }
