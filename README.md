@@ -14,6 +14,9 @@ Web-API server for ElectricalContactResistance mobile game
 * Databases:
   * MS SQL Server 2022,
   * MongoDB 7.0.7
+* Caching:
+  * In-memory
+  * Redis
 * Docker + docker-compose.override
 * Swagger
 * OAuth 2.0, JWT
@@ -34,7 +37,7 @@ Web-API server for ElectricalContactResistance mobile game
 ## Tools
 * Rider
 * Docker Desktop
-* GitCraken
+* GitKraken
 * Postman
 
 # Architecture
