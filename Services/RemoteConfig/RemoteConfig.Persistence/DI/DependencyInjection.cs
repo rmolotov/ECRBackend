@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using RemoteConfig.Application.Interfaces;
+using RemoteConfig.Persistence.Caching;
+using RemoteConfig.Persistence.Caching.Extensions;
 using RemoteConfig.Persistence.Database;
 
 namespace RemoteConfig.Persistence.DI;
@@ -17,13 +20,39 @@ public static class DependencyInjection
         var mongoClient = new MongoClient(connectionString);
 
         services
-            .AddDbContext<RemoteConfigContext>(options => 
-                options.UseMongoDB(mongoClient, databaseName));
+            .AddDbContext<IRemoteConfigContext, RemoteConfigContext>(options => options
+                .UseMongoDB(mongoClient, databaseName));
+
+        return services;
+    }
+
+    public static IServiceCollection AddCaching(this IServiceCollection services, Action<CacheConfigurationExpression> setupAction)
+    {
         services
-            .AddScoped<IRemoteConfigContext>(provider =>
-                provider.GetService<RemoteConfigContext>()
-            );
-        
+            .AddMemoryCache()
+            .AddDistributedMemoryCache()
+            .AddCacheProviders(
+                (sp, cfg) =>
+                {
+                    cfg.ConfigServiceProvider(sp);
+                    setupAction.Invoke(cfg);
+                })
+            .AddSingleton<ICacheService>(provider =>
+            {
+                var options = provider.GetRequiredService<IOptions<CacheConfigurationExpression>>();
+                return new CacheService(options.Value);
+            });
+
+        return services;
+    }
+
+    private static IServiceCollection AddCacheProviders(this IServiceCollection services,
+        Action<IServiceProvider, CacheConfigurationExpression> configAction)
+    {
+        services
+            .AddOptions<CacheConfigurationExpression>()
+            .Configure<IServiceProvider>((options, sp) => configAction(sp, options));
+
         return services;
     }
 }

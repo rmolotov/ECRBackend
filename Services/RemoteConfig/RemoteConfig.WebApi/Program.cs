@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using RemoteConfig.Application.Common.Mappings;
 using RemoteConfig.Application.DI;
 using RemoteConfig.Application.Interfaces;
+using RemoteConfig.Persistence.Caching.Providers;
 using RemoteConfig.Persistence.DI;
 using RemoteConfig.WebApi;
 using RemoteConfig.WebApi.Services;
@@ -23,6 +24,11 @@ builder.Services
     })
     .AddApplication()
     .AddPersistence(builder.Configuration)
+    .AddCaching(config =>
+    {
+        config.AddProvider<MemoryCacheProvider>();
+        config.AddProvider<RedisCacheProvider>();
+    })
     .AddCors(options =>
     {
         options.AddPolicy("AllowAll", policy =>
@@ -76,7 +82,7 @@ builder.Services
         policy.RequireClaim("scope", "ECR.Web");
     });
 
-// Logging
+// Custom services
 builder.Services
     .AddSingleton<ICurrentUserService, CurrentUserService>()
     .AddHttpContextAccessor();
