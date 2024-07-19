@@ -6,7 +6,7 @@ Web-API server for ElectricalContactResistance mobile game
 - **Rider:** multi-launch config (need MS SQL Server at `1433`)
 - **Docker:** ``docker compose up -d --build``
 - **Runner:** 
-  - Containerize runner: ``docker run -it ghcr.io/actions/actions-runner:2.317.0 sh -c './config.sh --url https://github.com/rmolotov/ECRBackend --token <runner_token> --unattended && ./run.sh'``
+  - Containerize runner: ``docker run --restart=always -d ghcr.io/actions/actions-runner:2.317.0 sh -c './config.sh remove --token <TOKEN> && ./config.sh --url https://github.com/rmolotov/ECRBackend --token <TOKEN> --unattended && ./run.sh'``
 
 # Tech Stack
 
