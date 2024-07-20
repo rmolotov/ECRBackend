@@ -19,7 +19,7 @@
     image: infrastructure-gateway
     build:
       context: .
-      dockerfile: Infrastructure/Gateway/Dockerfile
+      dockerfile: Infrastructure/Gateway/Gateway.Ocelot/Dockerfile
 
   remoteconfig-webapi:
     image: remoteconfig-webapi
