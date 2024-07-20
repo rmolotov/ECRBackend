@@ -14,6 +14,12 @@
     build:
       context: .
       dockerfile: Infrastructure/Identity/Dockerfile
+      
+  infrastructure-gateway:
+    image: infrastructure-gateway
+    build:
+      context: .
+      dockerfile: Infrastructure/Gateway/Dockerfile
 
   remoteconfig-webapi:
     image: remoteconfig-webapi
