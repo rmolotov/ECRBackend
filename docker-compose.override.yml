@@ -48,6 +48,16 @@
         condition: service_healthy
     ports:
       - "5001:5001"
+        
+  infrastructure-gateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5050
+    depends_on:
+      usersdb:
+        condition: service_healthy
+    ports:
+      - "5050:5050"
       
   usermanagement-webapi:
     environment:
