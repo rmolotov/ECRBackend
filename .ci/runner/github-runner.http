@@ -1,0 +1,6 @@
+### Get runner registration token
+## paste your auth or PAT token as auth header
+POST https://api.github.com/repos/rmolotov/ECRBackend/actions/runners/registration-token
+Accept: application/vnd.github+json
+Authorization: Bearer <your PAT or Access token>
+X-GitHub-Api-Version: 2022-11-28
