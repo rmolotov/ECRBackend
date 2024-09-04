@@ -1,7 +1,7 @@
 ﻿services:
   
   usersdb:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
     
   configsdb:
     image: mongo
