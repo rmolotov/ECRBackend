@@ -1,0 +1,19 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+      - feature/deploy
+        
+jobs:
+  build:
+    runs-on: local
+    steps:
+      - uses: actions/checkout@v3
+      - name: pull
+        run: echo "## pull main branch..."
+      - name: build
+        run: docker compose up -d --build
+      - name: report
+        run: echo "## completed"
