@@ -8,12 +8,12 @@ on:
         
 jobs:
   build:
-    runs-on: [self-hosted, local] 
+    runs-on: [self-hosted, cloud] 
     steps:
       - uses: actions/checkout@v3
       - name: pull
         run: echo "## pull main branch..."
       - name: build
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
       - name: report
         run: echo "## completed"

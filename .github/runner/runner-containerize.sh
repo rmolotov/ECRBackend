@@ -8,4 +8,4 @@ docker run \
     -e REPO_URL="rmolotov/ECRBackend" \
     -e RUNNER_TOKEN=$(curl -sX POST -H "Authorization: token <PAT_RUNNER>" https://api.github.com/repos/rmolotov/ECRBackend/actions/runners/registration-token | jq -r .token) \
     -d ghcr.io/actions/actions-runner:2.319.1 \
-    sh -c './config.sh --url https://github.com/${REPO_URL} --token ${RUNNER_TOKEN} --labels local --unattended && ./run.sh'
+    sh -c './config.sh --url https://github.com/${REPO_URL} --token ${RUNNER_TOKEN} --labels cloud --unattended && ./run.sh'
