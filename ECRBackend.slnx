@@ -1,21 +1,22 @@
 ﻿<Solution>
-  <Folder Name="/Infrastructure/">
-      <Project Path="Infrastructure\Gateway\Gateway.Ocelot\Gateway.Ocelot.csproj" Type="Classic C#" />
-  </Folder>
-  <Folder Name="/Infrastructure/Identity/">
-    <Project Path="Infrastructure\Identity\Identity.csproj" Type="Classic C#" />
-  </Folder>
-  <Folder Name="/Services/">
-      <Project Path="Services\RemoteConfig\RemoteConfig.Application\RemoteConfig.Application.csproj" Type="Classic C#" />
-      <Project Path="Services\RemoteConfig\RemoteConfig.Core\RemoteConfig.Core.csproj" Type="Classic C#" />
-      <Project Path="Services\RemoteConfig\RemoteConfig.Persistence\RemoteConfig.Persistence.csproj" Type="Classic C#" />
-      <Project Path="Services\RemoteConfig\RemoteConfig.WebApi\RemoteConfig.WebApi.csproj" Type="Classic C#" />
-      <Project Path="Services\UserManagement\UserManagement.Application\UserManagement.Application.csproj" Type="Classic C#" />
-      <Project Path="Services\UserManagement\UserManagement.Core\UserManagement.Core.csproj" Type="Classic C#" />
-      <Project Path="Services\UserManagement\UserManagement.Persistence\UserManagement.Persistence.csproj" Type="Classic C#" />
-      <Project Path="Services\UserManagement\UserManagement.WebApi\UserManagement.WebApi.csproj" Type="Classic C#" />
-  </Folder>
-  <Project Path="docker-compose.dcproj" Type="Classic C#">
-    <Configuration Solution="Release|Any CPU" Project="Debug|Any CPU" />
-  </Project>
+    <Folder Name="/Infrastructure/" />
+    <Folder Name="/Infrastructure/Gateway/">
+        <Project Path="Infrastructure\Gateway\Gateway.Ocelot\Gateway.Ocelot.csproj" Type="Classic C#" />
+    </Folder>
+    <Folder Name="/Infrastructure/Identity/">
+        <Project Path="Infrastructure\Identity\Identity.csproj" Type="Classic C#" />
+    </Folder>
+    <Folder Name="/Services/">
+        <Project Path="Services\RemoteConfig\RemoteConfig.Application\RemoteConfig.Application.csproj" Type="Classic C#" />
+        <Project Path="Services\RemoteConfig\RemoteConfig.Core\RemoteConfig.Core.csproj" Type="Classic C#" />
+        <Project Path="Services\RemoteConfig\RemoteConfig.Persistence\RemoteConfig.Persistence.csproj" Type="Classic C#" />
+        <Project Path="Services\RemoteConfig\RemoteConfig.WebApi\RemoteConfig.WebApi.csproj" Type="Classic C#" />
+        <Project Path="Services\UserManagement\UserManagement.Application\UserManagement.Application.csproj" Type="Classic C#" />
+        <Project Path="Services\UserManagement\UserManagement.Core\UserManagement.Core.csproj" Type="Classic C#" />
+        <Project Path="Services\UserManagement\UserManagement.Persistence\UserManagement.Persistence.csproj" Type="Classic C#" />
+        <Project Path="Services\UserManagement\UserManagement.WebApi\UserManagement.WebApi.csproj" Type="Classic C#" />
+    </Folder>
+    <Project Path="docker-compose.dcproj" Type="Classic C#">
+        <Configuration Solution="Release|Any CPU" Project="Debug|Any CPU" />
+    </Project>
 </Solution>
