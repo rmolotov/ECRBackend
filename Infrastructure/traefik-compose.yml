@@ -1,0 +1,41 @@
+services:
+  traefik:
+    image: traefik:latest
+    restart: always
+    container_name: "traefik"
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --accesslog=true
+      - --certificatesresolvers.le.acme.email=r.molotov@yahoo.com
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.traefik-compress.compress=true
+      - traefik.http.routers.traefik.entrypoints=web
+      - traefik.http.routers.traefik.rule=Host(`electrical-contact-resistance.ru`)
+      - traefik.http.routers.traefik_https.entrypoints=websecure
+      - traefik.http.routers.traefik_https.rule=Host(`electrical-contact-resistance.ru`)
+      - traefik.http.routers.traefik_https.tls=true
+      - traefik.http.routers.traefik_https.tls.certresolver=le
+      - traefik.http.services.traefik.loadbalancer.server.port=80
+        
+volumes:
+  letsencrypt:        
+
+networks:
+  default:
+      name: traefik
+      external: true
