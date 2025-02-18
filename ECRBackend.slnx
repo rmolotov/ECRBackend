@@ -1,16 +1,22 @@
 ﻿<Solution>
-    <Folder Name="/Infrastructure/" />
+    <Folder Name="/Infrastructure/">
+        <File Path="Infrastructure\nexus.yml" />
+        <File Path="Infrastructure\traefik.yml" />
+    </Folder>
     <Folder Name="/Infrastructure/Gateway/">
         <Project Path="Infrastructure\Gateway\Gateway.Ocelot\Gateway.Ocelot.csproj" Type="Classic C#" />
     </Folder>
     <Folder Name="/Infrastructure/Identity/">
         <Project Path="Infrastructure\Identity\Identity.csproj" Type="Classic C#" />
     </Folder>
-    <Folder Name="/Services/">
+    <Folder Name="/Services/" />
+    <Folder Name="/Services/RemoteConfig">
         <Project Path="Services\RemoteConfig\RemoteConfig.Application\RemoteConfig.Application.csproj" Type="Classic C#" />
         <Project Path="Services\RemoteConfig\RemoteConfig.Core\RemoteConfig.Core.csproj" Type="Classic C#" />
         <Project Path="Services\RemoteConfig\RemoteConfig.Persistence\RemoteConfig.Persistence.csproj" Type="Classic C#" />
         <Project Path="Services\RemoteConfig\RemoteConfig.WebApi\RemoteConfig.WebApi.csproj" Type="Classic C#" />
+    </Folder>
+    <Folder Name="/Services/UserManagement">
         <Project Path="Services\UserManagement\UserManagement.Application\UserManagement.Application.csproj" Type="Classic C#" />
         <Project Path="Services\UserManagement\UserManagement.Core\UserManagement.Core.csproj" Type="Classic C#" />
         <Project Path="Services\UserManagement\UserManagement.Persistence\UserManagement.Persistence.csproj" Type="Classic C#" />
