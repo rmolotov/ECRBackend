@@ -1,0 +1,71 @@
+@scope_api = ECR.Api
+@scope_web = ECR.Web
+@client_id_dev = Client.Dev
+@client_id_api = Client.Api
+@client_id_web = Client.Web
+
+@user_username = rm
+@user_password = Password123$
+
+
+### Get Token Dev
+POST {{Auth}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type = client_credentials &
+client_id = {{client_id_dev}} &
+client_secret = {{dev_secret}}
+> {%
+    console.log(response.body);
+    client.global.set("token_dev", response.body["access_token"]);
+%}
+
+
+### Get Token API 
+POST {{Auth}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type = client_credentials &
+client_id = {{client_id_api}} &
+client_secret = {{api_secret}}
+
+> {%
+    console.log(response.body);
+    client.global.set("token_api", response.body["access_token"]);
+%}
+
+
+### Get Token Web
+POST {{Auth}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type = password &
+username = {{user_username}} &
+password = {{user_password}} &
+client_id = {{client_id_web}}
+
+> {%
+    console.log(response.body);
+    client.global.set("token_web", response.body["access_token"]);
+    client.global.set("token_web_refresh", response.body["refresh_token"]);
+    client.log(client.global.get("token_web_refresh"));
+%}
+
+
+### Refresh Token Web
+POST {{Auth}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type = refresh_token &
+client_id = {{client_id_web}} &
+refresh_token = {{token_web_refresh}}
+
+> {%
+    console.log(request)
+    client.global.set("token_web", response.body["access_token"]);
+    client.global.set("token_web_refresh", response.body["refresh_token"]);
+%}
+
+
+
+
