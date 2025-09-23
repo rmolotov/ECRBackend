@@ -6,7 +6,7 @@ using UserManagement.Application.Roles.UpdateRole;
 namespace UserManagementService.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class RolesController(RoleManager<IdentityRole> roleManager) : ControllerBase
 {

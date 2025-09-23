@@ -5,6 +5,7 @@ Web-API server for ElectricalContactResistance mobile game
 
 - **Rider:** multi-launch config (need MS SQL Server at `1433`)
 - **Docker:** ``docker compose up -d --build``
+- **Proxy in Docker:** `` docker compose -f .\.ci\traefik-debug.yml -p ecr up -d``
 - **Runner:** Containerize runner: 
   ``` bash
   docker run \
@@ -64,3 +65,16 @@ Web-API server for ElectricalContactResistance mobile game
   * Application
   * Persistence
   * WebAPI - at `http, 5003`
+
+# Commands:
+### Local debug
+``` bash
+    docker-compose -p ecr -f docker-compose.databases.yml -f docker-compose.services.yml --env-file .ci/services.env up -d --build
+```
+### Add migration
+```bash
+    cd ./Services/RemoteConfig/RemoteConfig.Persistence/
+```
+```bash
+    dotnet ef migrations add MigrationName -s ../RemoteConfig.Api/
+```

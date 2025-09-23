@@ -1,0 +1,16 @@
+services:
+  nexus:
+    image: sonatype/nexus3:latest
+    container_name: "nexus"
+    ports:
+      - "8081:8081"
+      - "8123:8123"
+    volumes:
+      - ./data:/nexus-data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.registry.rule=Host(`electrical-contact-resistance.ru`)
+      - traefik.http.routers.registry.entrypoints=websecure
+      - traefik.http.routers.registry.tls.certresolver=le
+      - traefik.http.routers.registry.middlewares=traefik-compress
+      - traefik.http.services.registry.loadbalancer.server.port=8081
