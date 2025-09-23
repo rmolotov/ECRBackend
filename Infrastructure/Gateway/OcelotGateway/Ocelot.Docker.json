@@ -1,0 +1,33 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ecr-services-remoteconfig",
+          "Port": "5003"
+        }
+      ],
+      "UpstreamPathTemplate": "/RemoteConfig/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    
+    {
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ecr-services-usermanagement",
+          "Port": "5002"
+        }
+      ],
+      "UpstreamPathTemplate": "/UserManagement/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    }
+  ],
+  
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000/"
+  }
+}

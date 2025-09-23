@@ -56,7 +56,6 @@ if (app.Environment.IsDevelopment())
 IdentityModelEventSource.ShowPII = true;
 
 app
-    .UseHttpsRedirection()
     .UseRouting()
     .UseAuthentication()
     .UseAuthorization();

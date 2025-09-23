@@ -1,0 +1,110 @@
+import ../../../Infrastructure/Identity/IdentityServer/Identity.Api.http
+
+
+@user_username = rm
+@user_nickname = rm
+@user_password = Password123$
+@user_role = admin
+
+###
+run #Get Token API
+###
+run #Get Token Dev
+### 
+run #Get Token Web
+
+
+###
+GET {{UserManagement}}/HealthCheck
+Authorization: Bearer {{token_dev}}
+
+### GET Roles
+GET {{UserManagement}}/roles/all
+Authorization: Bearer {{token_dev}}
+
+
+### Create Role
+POST {{UserManagement}}/roles/
+Authorization: Bearer {{token_dev}}
+Content-Type: application/json
+
+"{{user_role}}"
+
+
+### Update Role
+PUT {{UserManagement}}/roles/
+Authorization: Bearer {{token_dev}}
+Content-Type: application/json
+
+{
+  "CurrentRoleName": "admin",
+  "NewRoleName": "user"
+}
+
+
+### Get Users
+GET {{UserManagement}}/users/all
+Authorization: Bearer {{token_api}}
+
+
+### Get User
+GET {{UserManagement}}/users/?UserName={{user_username}}
+Authorization: Bearer {{token_dev}}
+
+### Get Current User
+GET {{UserManagement}}/users/me
+Authorization: Bearer {{token_web}}
+
+### Delete Current User
+DELETE {{UserManagement}}/users/me
+Authorization: Bearer {{token_web}}
+
+### Reset Current User
+PUT {{UserManagement}}/users/me
+Authorization: Bearer {{token_web}}
+
+### Create User
+POST {{UserManagement}}/users/
+Authorization: Bearer {{token_api}}
+Content-Type: application/json
+
+{
+  "user":
+  {
+    "userName": "{{user_username}}",
+     "NickName": "{{user_nickname}}"
+  },
+  "password": "{{user_password}}"
+}
+
+
+### Update User
+PUT {{UserManagement}}/users/
+Content-Type: application/json
+Authorization: Bearer {{token_web}}
+
+{
+  "UserName": "{{user_username}}",
+  "NickName": "test user"
+}
+
+
+
+### Delete User
+DELETE {{UserManagement}}/users/{{user_username}}
+Authorization: Bearer {{token_dev}}
+
+
+### Update User Roles
+PUT {{UserManagement}}/users/addRoles
+Authorization: Bearer {{token_dev}}
+Content-Type: application/json
+
+{
+  "UserName": "{{user_username}}",
+  "RolesNames": [
+    "{{user_role}}",
+    "user"
+  ]
+}
+

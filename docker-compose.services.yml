@@ -1,0 +1,99 @@
+services:
+  ecr-infrastructure-identity:
+    image: ecr-infrastructure-identity
+    build:
+      context: .
+      dockerfile: Infrastructure/Identity/IdentityServer/Dockerfile
+    env_file: .ci/services.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5001
+    depends_on: 
+      ecr-databases-mssql:
+        condition: service_healthy
+    ports:
+      - "5001:5001"
+    networks:
+      - ecr-services
+      - ecr-db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.infrastructure-identity.entryPoints=web"
+      - "traefik.http.routers.infrastructure-identity.rule=Host(`localhost`) && PathPrefix(`/dev/auth`)"
+#     - "traefik.http.routers.infrastructure-identity.tls.certResolver=le"
+      - "traefik.http.services.infrastructure-identity.loadBalancer.server.port=5001"
+      - "traefik.http.middlewares.infrastructure-identity-strip.stripPrefix.prefixes=/dev/auth/"
+      - "traefik.http.routers.infrastructure-identity.middlewares=infrastructure-identity-strip@docker"
+        
+  ecr-infrastructure-gateway:
+    image: ecr-infrastructure-gateway
+    build:
+      context: .
+      dockerfile: Infrastructure/Gateway/OcelotGateway/Dockerfile
+    env_file: .ci/services.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5050
+    depends_on:
+      ecr-databases-mssql:
+        condition: service_healthy
+    ports:
+      - "5050:5050"
+    networks:
+      - ecr-services
+      - ecr-db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.infrastructure-gateway.entryPoints=web"
+      - "traefik.http.routers.infrastructure-gateway.rule=Host(`localhost`) && PathPrefix(`/dev/api`)"
+#     - "traefik.http.routers.infrastructure-gateway.tls.certResolver=le"
+      - "traefik.http.services.infrastructure-gateway.loadBalancer.server.port=5050"
+      - "traefik.http.middlewares.infrastructure-gateway-strip.stripPrefix.prefixes=/dev/api/"
+      - "traefik.http.routers.infrastructure-gateway.middlewares=infrastructure-gateway-strip@docker"
+  
+  ecr-services-usermanagement:
+    image: ecr-usermanagement-api
+    build:
+      context: .
+      dockerfile: Services/UserManagement/UserManagement.Api/Dockerfile
+    env_file: .ci/services.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5002
+    depends_on: 
+      - ecr-infrastructure-identity
+    ports:
+      - "5002:5002"
+    networks:
+      - ecr-services
+      - ecr-db
+
+  ecr-services-remoteconfig:
+    image: ecr-remoteconfig-api
+    build:
+      context: .
+      dockerfile: Services/RemoteConfig/RemoteConfig.Api/Dockerfile
+    env_file: .ci/services.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5003
+    depends_on: 
+      ecr-databases-mongo:
+        condition: service_healthy
+      ecr-databases-redis:
+        condition: service_healthy
+      ecr-infrastructure-identity:
+        condition: service_started
+      ecr-services-usermanagement:
+        condition: service_started
+    ports:
+      - "5003:5003"
+    networks:
+      - ecr-services
+      - ecr-db
+
+networks:
+  ecr-services:
+    external: true
+  ecr-db:
+    external: true

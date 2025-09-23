@@ -8,7 +8,7 @@ using UserManagement.Core.Entities;
 namespace UserManagementService.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class UsersController(UserManager<ApplicationUser> userManager) : ControllerBase
 {
