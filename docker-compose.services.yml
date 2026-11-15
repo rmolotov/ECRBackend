@@ -3,7 +3,7 @@ services:
     image: ecr-infrastructure-identity
     build:
       context: .
-      dockerfile: Infrastructure/Identity/IdentityServer/Dockerfile
+      dockerfile: src/Infrastructure/Identity/IdentityServer/Dockerfile
     env_file: .ci/services.env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
@@ -18,6 +18,7 @@ services:
       - ecr-db
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=ecr-services"
       - "traefik.http.routers.infrastructure-identity.entryPoints=web"
       - "traefik.http.routers.infrastructure-identity.rule=Host(`localhost`) && PathPrefix(`/dev/auth`)"
 #     - "traefik.http.routers.infrastructure-identity.tls.certResolver=le"
@@ -29,7 +30,7 @@ services:
     image: ecr-infrastructure-gateway
     build:
       context: .
-      dockerfile: Infrastructure/Gateway/OcelotGateway/Dockerfile
+      dockerfile: src/Infrastructure/Gateway/OcelotGateway/Dockerfile
     env_file: .ci/services.env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
@@ -44,6 +45,7 @@ services:
       - ecr-db
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=ecr-services"
       - "traefik.http.routers.infrastructure-gateway.entryPoints=web"
       - "traefik.http.routers.infrastructure-gateway.rule=Host(`localhost`) && PathPrefix(`/dev/api`)"
 #     - "traefik.http.routers.infrastructure-gateway.tls.certResolver=le"
@@ -55,7 +57,7 @@ services:
     image: ecr-usermanagement-api
     build:
       context: .
-      dockerfile: Services/UserManagement/UserManagement.Api/Dockerfile
+      dockerfile: src/Services/UserManagement/UserManagement.Api/Dockerfile
     env_file: .ci/services.env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
@@ -72,7 +74,7 @@ services:
     image: ecr-remoteconfig-api
     build:
       context: .
-      dockerfile: Services/RemoteConfig/RemoteConfig.Api/Dockerfile
+      dockerfile: src/Services/RemoteConfig/RemoteConfig.Api/Dockerfile
     env_file: .ci/services.env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
