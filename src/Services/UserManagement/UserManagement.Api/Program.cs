@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
+using Shared.Identity.Configurations;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddDbContext<UsersDbContext>(optionsBuilder =>
     {
-        optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("UsersConnection"));
+        optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("UsersConnection"));
     });
 
 builder.Services
@@ -22,7 +23,7 @@ builder.Services
     .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
     .AddIdentityServerAuthentication(options =>
     {
-        options.Authority = builder.Configuration.GetValue<string>("IdentityUri");
+        options.Authority = builder.Configuration.GetIdentitySettings().Uri;
         options.RequireHttpsMetadata = false;
     });
 builder.Services

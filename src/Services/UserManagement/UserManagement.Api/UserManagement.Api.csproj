@@ -31,6 +31,7 @@
     <ItemGroup>
       <ProjectReference Include="..\UserManagement.Application\UserManagement.Application.csproj" />
       <ProjectReference Include="..\UserManagement.Persistence\UserManagement.Persistence.csproj" />
+      <ProjectReference Include="..\..\..\Shared\Shared.Identity\Shared.Identity.csproj" />
     </ItemGroup>
 
 </Project>

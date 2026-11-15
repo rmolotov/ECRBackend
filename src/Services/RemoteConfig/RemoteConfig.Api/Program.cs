@@ -10,6 +10,7 @@ using RemoteConfig.Persistence.DI;
 using RemoteConfig.WebApi;
 using RemoteConfig.WebApi.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Shared.Identity.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,7 +67,7 @@ builder.Services
     })
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = builder.Configuration.GetValue<string>("IdentityUri");
+        options.Authority = builder.Configuration.GetIdentitySettings().Uri;
         options.Audience = "ECR.Web";
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters

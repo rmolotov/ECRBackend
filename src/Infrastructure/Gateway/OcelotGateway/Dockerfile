@@ -6,6 +6,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Infrastructure/Gateway/OcelotGateway/OcelotGateway.csproj", "Infrastructure/Gateway/OcelotGateway/"]
+COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
 RUN dotnet restore "Infrastructure/Gateway/OcelotGateway/OcelotGateway.csproj"
 COPY src/ .
 WORKDIR "/src/Infrastructure/Gateway/OcelotGateway"

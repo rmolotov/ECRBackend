@@ -9,7 +9,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:5001
     depends_on: 
-      ecr-databases-mssql:
+      ecr-databases-postgres:
         condition: service_healthy
     ports:
       - "5001:5001"
@@ -36,7 +36,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:5050
     depends_on:
-      ecr-databases-mssql:
+      ecr-databases-postgres:
         condition: service_healthy
     ports:
       - "5050:5050"
@@ -62,8 +62,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:5002
-    depends_on: 
-      - ecr-infrastructure-identity
+    depends_on:
+      ecr-databases-postgres:
+        condition: service_healthy
+      ecr-infrastructure-identity:
+        condition: service_started
     ports:
       - "5002:5002"
     networks:

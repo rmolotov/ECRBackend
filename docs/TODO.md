@@ -60,10 +60,10 @@
 
 | Компонент | Роль | Хранилище |
 |---|---|---|
-| **src/Infrastructure/Identity/IdentityServer** | OAuth2/OIDC-сервер на IdentityServer4 и ASP.NET Identity. UI из шаблона QuickStart (MVC, Bootstrap 4, jQuery). Клиенты, скоупы и гранты хранятся в БД через EF. | MSSQL: `ECR.IdentityServer`, `ECR.Users` |
+| **src/Infrastructure/Identity/IdentityServer** | OAuth2/OIDC-сервер на IdentityServer4 и ASP.NET Identity. UI из шаблона QuickStart (MVC, Bootstrap 4, jQuery). Клиенты, скоупы и гранты хранятся в БД через EF. | PostgreSQL: `ECR.IdentityServer`, `ECR.Users` |
 | **src/Infrastructure/Gateway/OcelotGateway** | API Gateway: маршрутизация и JWT-аутентификация на маршрутах | — |
 | **src/Services/RemoteConfig** | Статичные игровые данные: герои, враги, этапы (Stage), предметы инвентаря. CQRS через MediatR, pipeline-поведения Logging → Validation → Caching. Кэш — цепочка провайдеров Memory → Distributed. | MongoDB через EF Core-провайдер |
-| **src/Services/UserManagement** | CRUD пользователей и ролей поверх `UserManager`/`RoleManager`. Слой Application пустой — только DTO. | MSSQL: `ECR.Users` |
+| **src/Services/UserManagement** | CRUD пользователей и ролей поверх `UserManager`/`RoleManager`. Слой Application пустой — только DTO. | PostgreSQL: `ECR.Users` |
 | **src/Shared/Shared.Identity** | Общие `IdentityConfiguration` и `CurrentUserService`. В работе, пока **никем не подключён**. | — |
 
 **Связи между проектами:** IdentityServer напрямую ссылается на все три проекта UserManagement (Core, Application, Persistence) и использует ту же БД `ECR.Users`. Identity и UserManagement связаны на уровне схемы данных, миграции применяются из двух мест.
@@ -83,7 +83,7 @@
 
 | Сервис | Образ | Комментарий |
 |---|---|---|
-| MS SQL Server | `mssql/server:2022-latest` | Порт 1433 открыт на хост, пароль `sa` лежит в репозитории |
+| PostgreSQL | `postgres:18` | Порт 5432 открыт на хост, пароль `postgres` лежит в репозитории |
 | MongoDB | `mongo` (без тега) | Без аутентификации, порт 27017 открыт на хост |
 | Redis | `redis` (без тега) | Без пароля, порт 6379 открыт на хост, кодом не используется |
 | Traefik | `traefik:latest` | Обратный прокси, Let's Encrypt (TLS-ALPN), basic auth на дашборд |
@@ -104,7 +104,7 @@
 | MongoDB.Driver / MongoDB.EntityFrameworkCore | 3.5.0 / 9.0.1 | RC.Persistence | — |
 | Microsoft.Extensions.Caching.StackExchangeRedis | 9.0.9 | RC.Persistence | Подключён, но не используется |
 | Newtonsoft.Json | 13.0.4 | RC.Persistence | Только для сериализации кэша, можно заменить на System.Text.Json |
-| EF Core SqlServer / Identity.EntityFrameworkCore | 9.0.9 | Identity, UM | — |
+| Npgsql.EntityFrameworkCore.PostgreSQL / Identity.EntityFrameworkCore | 9.0.4 / 9.0.9 | Identity, UM | — |
 | Ocelot | 24.0.1 | Gateway | `Ocelot.Provider.Kubernetes` и `Ocelot.Cache.CacheManager` подключены, но закомментированы в коде |
 | Swashbuckle / Asp.Versioning | 9.0.4 / 8.1.0 | RC, UM | — |
 | Serilog (+AspNetCore, Sinks.File) | 4.3 / 9.0 / 7.0 | Identity, RC.Application | В RemoteConfig не сконфигурирован (см. B5) |
@@ -125,7 +125,7 @@
   - Что сделать: ротировать ключ и секреты, вычистить историю (`git filter-repo`), передавать через secrets/env, использовать нормальный ключ подписи вместо `AddDeveloperSigningCredential`.
 - [ ] **S2. Изменять этапы (Stage) может кто угодно без авторизации.** В `StageController.cs:14` атрибут `[AllowAnonymous]` висит на классе и отменяет `[Authorize]` на POST, PUT и DELETE. Компилятор предупреждает об этом (ASP0026). **Подтверждено в Docker:** `POST`/`DELETE /api/1.0/Stage` без токена → 201 / 204 (для сравнения `POST /api/1.0/Hero` → 401).
 - [ ] **S3. В Docker-конфигурации Gateway не проверяет авторизацию.** В `Ocelot.Docker.json` нет `AuthenticationOptions` ни на одном маршруте. Сервисы 5002 и 5003 опубликованы на хост в обход gateway.
-- [ ] **S4. Базы данных доступны снаружи.** MSSQL, Mongo и Redis публикуют порты на хост и не защищены паролями (кроме MSSQL со слабым `sa`). Деплой идёт на `[self-hosted, cloud]`, поэтому на публичном сервере базы, скорее всего, видны из интернета (порты на сервере не проверялись).
+- [ ] **S4. Базы данных доступны снаружи.** PostgreSQL, Mongo и Redis публикуют порты на хост и не защищены паролями (кроме PostgreSQL со слабым паролем `postgres`). Деплой идёт на `[self-hosted, cloud]`, поэтому на публичном сервере базы, скорее всего, видны из интернета (порты на сервере не проверялись).
 - [ ] **S5. UserManagement отдаёт сущность `ApplicationUser` целиком.**
   - `Get` и `GetAll` возвращают `PasswordHash`, `SecurityStamp` и другие внутренние поля.
   - `CreateUserCommand.User` принимает `ApplicationUser` из тела запроса (mass assignment): можно выставить `EmailConfirmed`, `Id`, `LockoutEnabled`.
@@ -137,17 +137,17 @@
 
 - [x] **B1. `.slnx` не открывается.** `dotnet build ECRBackend.slnx`: `Solution folder path '/Services/RemoteConfig' must start and end with '/'`. Исправлено: `/Services/RemoteConfig/` и `/Services/UserManagement/`.
 - [ ] **B2. CI, скорее всего, не работает.** `build.yml` вызывает `docker compose up -d --build`, но в корне нет `docker-compose.yml` — есть только `docker-compose.databases.yml` и `docker-compose.services.yml`. Сети `ecr-db` и `ecr-services` объявлены `external` и должны быть созданы заранее.
-- [ ] **B3. Healthcheck MSSQL указывает на старый путь (не проверено).** Используется `/opt/mssql-tools/bin/sqlcmd`; в актуальных образах `2022-latest` утилита лежит в `/opt/mssql-tools18/bin/sqlcmd`. Если healthcheck не проходит, Identity и Gateway с условием `service_healthy` не стартуют.
-- [ ] **B3a. MSSQL не запускается на Apple Silicon (colima + qemu).** Образ только amd64; под qemu `sqlservr` падает с `Invalid mapping of address ... in reserved address space` и уходит в цикл перезапусков. Варианты: `colima start --vm-type vz --vz-rosetta --cpu 4 --memory 6` (VM сейчас 2 ГБ — это минимум MSSQL) или arm64-совместимая БД для локальной разработки. Из-за этого Identity и UserManagement в Docker не проверены.
+- [x] **B3. Healthcheck MSSQL указывает на старый путь (не проверено).** Неактуально: MSSQL заменён на PostgreSQL с healthcheck `pg_isready`. Используется `/opt/mssql-tools/bin/sqlcmd`; в актуальных образах `2022-latest` утилита лежит в `/opt/mssql-tools18/bin/sqlcmd`. Если healthcheck не проходит, Identity и Gateway с условием `service_healthy` не стартуют.
+- [x] **B3a. MSSQL не запускается на Apple Silicon (colima + qemu).** Решено: MSSQL заменён на `postgres:18` (нативный arm64), миграции Identity и UserManagement пересозданы под Npgsql. Образ только amd64; под qemu `sqlservr` падает с `Invalid mapping of address ... in reserved address space` и уходит в цикл перезапусков. Варианты: `colima start --vm-type vz --vz-rosetta --cpu 4 --memory 6` (VM сейчас 2 ГБ — это минимум MSSQL) или arm64-совместимая БД для локальной разработки. Из-за этого Identity и UserManagement в Docker не проверены.
 - [ ] **B4. Redis фактически не используется.** В `RemoteConfig.Persistence/DI/DependencyInjection.cs` регистрируется `AddDistributedMemoryCache()`, `AddStackExchangeRedisCache` не вызывается. `RedisCacheProvider` работает с in-memory кэшем внутри процесса. `CacheUri` и `CacheConfiguration__Uri` никто не читает. **Подтверждено:** после кэшируемых запросов в Redis только ключ `ping` от healthcheck.
 - [ ] **B5. Логи RemoteConfig не пишутся.** `LoggingBehavior` пишет через статический `Serilog.Log`, но в `RemoteConfig.Api/Program.cs` Serilog не настроен — сообщения уходят в пустой логгер.
 - [x] **B6. Адреса Identity в Docker не совпадали с compose.**
   - [x] `Gateway/appsettings.Docker.json` и `RemoteConfig.Api/appsettings.Docker.json`: `infrastructure-identity` → `ecr-infrastructure-identity`.
   - [x] `IdentityServer/appsettings.Docker.json`: хост БД `usersdb` → `ecr-databases-mssql`.
   - [x] `RemoteConfig.Api/appsettings.Docker.json`: хост Mongo `configsdb` → `ecr-databases-mongo`. Без этого все запросы падали с 500 после 30 с ожидания сервера. Код читает `DatabaseSettings:ConnectionString`, поэтому `ConnectionStrings__RemoteConfig` из `services.env` не применяется — env-ключ стоит привести к коду.
-  - [ ] `.ci/services.env` задаёт `IdentitySettings__Uri`, а код читает `IdentityUri`. Оставлено для `Shared.Identity`; там тоже расхождение: секция в коде `IdentityConfiguration`, в env — `IdentitySettings`.
+  - [x] `.ci/services.env` задаёт `IdentitySettings__Uri`, а код читает `IdentityUri`. Исправлено: все сервисы читают секцию `IdentitySettings` через `Shared.Identity` (`GetIdentitySettings()`), ключ `IdentityUri` в appsettings заменён на `IdentitySettings:Uri`. Оставлено для `Shared.Identity`; там тоже расхождение: секция в коде `IdentityConfiguration`, в env — `IdentitySettings`.
 - [ ] **B7. IdentityServer за Traefik.** Traefik отрезает префикс `/dev/auth`, а `UseForwardedHeaders`/`UsePathBase` не настроены. Discovery-документ отдаст адреса без префикса, внешние клиенты не найдут эндпоинты. `IssuerUri` зафиксирован на внутреннем адресе — валидация issuer у внешних клиентов тоже может не пройти.
-- [ ] **B8. Ключ разработчика в контейнере (не проверено).** `AddDeveloperSigningCredential()` пишет `tempkey.jwk` в `/app`; образ запускается от `$APP_UID`, у которого может не быть права записи. В любом случае ключ пересоздаётся при каждом деплое, и выданные ранее токены перестают проходить проверку.
+- [ ] **B8. Ключ разработчика в контейнере.** Подтверждено: Identity падал с `Access to the path '/app/tempkey.jwk' is denied`; в Dockerfile выдано право записи в `/app`, пересоздание ключа при деплое остаётся. `AddDeveloperSigningCredential()` пишет `tempkey.jwk` в `/app`; образ запускается от `$APP_UID`, у которого может не быть права записи. В любом случае ключ пересоздаётся при каждом деплое, и выданные ранее токены перестают проходить проверку.
 - [x] **B9. Маршруты Ocelot для Development были скопированы с ошибками.** UserManagement вёл на порт RemoteConfig (7219) и путь `/api/v1`. Исправлено в `Ocelot.Development.json` и `Ocelot.json`: `/UserManagement/{everything}` → `https://localhost:5003/api/{everything}`.
 - [ ] **B10. `/HealthCheck` в RemoteConfig недоступен (404).** У контроллера нет версии, а API-версионирование без `AssumeDefaultVersionWhenUnspecified` не пускает к нему запрос. Пометить контроллер `[ApiVersionNeutral]` или перейти на `MapHealthChecks`.
 - [x] **B11. Traefik выбирал не ту сеть.** Gateway и Identity состоят в двух сетях, а метки `traefik.docker.network` не было — Traefik взял IP из `ecr-db`, в которой сам не состоит, и запросы через `localhost/dev/api` висели до таймаута. Исправлено: в `docker-compose.services.yml` добавлена метка `traefik.docker.network=ecr-services`.
@@ -215,10 +215,11 @@
 docker network create ecr-db && docker network create ecr-services
 # 1. базы данных
 docker-compose -p ecr -f docker-compose.databases.yml -f docker-compose.services.yml \
-  --env-file .ci/services.env up -d ecr-databases-mssql ecr-databases-mongo ecr-databases-redis
-# 2. сервисы (без MSSQL — только те, что от него не зависят)
+  --env-file .ci/services.env up -d ecr-databases-postgres ecr-databases-mongo ecr-databases-redis
+# 2. сервисы
 docker-compose -p ecr -f docker-compose.databases.yml -f docker-compose.services.yml \
-  --env-file .ci/services.env up -d --build --no-deps ecr-services-remoteconfig ecr-infrastructure-gateway
+  --env-file .ci/services.env up -d --build ecr-infrastructure-identity ecr-services-usermanagement \
+  ecr-services-remoteconfig ecr-infrastructure-gateway
 # 3. общий Traefik в сеть сервисов
 docker network connect ecr-services traefik
 ```
@@ -228,8 +229,8 @@ docker network connect ecr-services traefik
 | Компонент | Статус |
 |---|---|
 | Mongo, Redis | healthy |
-| MSSQL | ❌ падает под qemu (B3a) |
-| IdentityServer, UserManagement | не запускались (нужен MSSQL) |
+| PostgreSQL 18 (вместо MSSQL) | healthy |
+| IdentityServer, UserManagement | ✅ работают (миграции применяются при старте) |
 | RemoteConfig, Gateway | ✅ работают |
 
 | Запрос | Ответ |
@@ -240,6 +241,9 @@ docker network connect ecr-services traefik
 | `POST /api/1.0/Hero` без токена | 401 |
 | `POST`/`DELETE /api/1.0/Stage` без токена | 201 / 204 (S2) |
 | `GET /api/1.0/Hero/nope`, POST с невалидным телом | 500 (нет обработчика ошибок) |
-| `GET :5050/UserManagement/...` | 502 (сервис не запущен) |
+| `GET :5050/UserManagement/...` | 200 с токеном |
+| `POST /connect/token` (client_credentials, `Client.Api`, `ECR.Api`) | 200 |
+| `GET :5002/api/Users/all` без токена / с токеном | 401 / 200 |
+| `POST :5002/api/Users`, затем `GET :5002/api/Users?username=...` | 200, пользователь сохранён в PostgreSQL |
 
-Записать данные через POST не удалось: нужен токен, а IdentityServer без MSSQL не работает. Тестовые документы (`hero-default`, `enemy-resistor`, `enemy-capacitor`, `enemy-transistor`) вставлены напрямую через `mongosh` в базу `ECR` и читаются через API, Gateway и Traefik.
+Изначально записать данные через POST не удалось: IdentityServer не работал без MSSQL (после перехода на PostgreSQL токены выдаются). Тестовые документы (`hero-default`, `enemy-resistor`, `enemy-capacitor`, `enemy-transistor`) вставлены напрямую через `mongosh` в базу `ECR` и читаются через API, Gateway и Traefik.

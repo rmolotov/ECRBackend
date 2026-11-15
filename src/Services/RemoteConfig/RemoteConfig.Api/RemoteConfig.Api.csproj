@@ -26,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\RemoteConfig.Application\RemoteConfig.Application.csproj" />
       <ProjectReference Include="..\RemoteConfig.Persistence\RemoteConfig.Persistence.csproj" />
+      <ProjectReference Include="..\..\..\Shared\Shared.Identity\Shared.Identity.csproj" />
     </ItemGroup>
 
 </Project>

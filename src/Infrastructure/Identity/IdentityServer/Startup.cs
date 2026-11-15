@@ -15,13 +15,13 @@ using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Shared.Identity.Configurations;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
 
@@ -51,7 +51,7 @@ namespace Identity
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             services.AddDbContext<UsersDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("UsersConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("UsersConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -69,11 +69,11 @@ namespace Identity
 
                     // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                     options.EmitStaticAudienceClaim = true;
-                    options.IssuerUri = Configuration.GetValue<string>("IdentityUri");
+                    options.IssuerUri = Configuration.GetIdentitySettings().Uri;
                 })
                 .AddConfigurationStore(options =>
                 {
-                    options.ConfigureDbContext = b => b.UseSqlServer(
+                    options.ConfigureDbContext = b => b.UseNpgsql(
                             Configuration.GetConnectionString("IdentityServer"),
                             sql =>
                             {
@@ -85,7 +85,7 @@ namespace Identity
                 })
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = b => b.UseSqlServer(
+                    options.ConfigureDbContext = b => b.UseNpgsql(
                             Configuration.GetConnectionString("IdentityServer"),
                             sql =>
                             {
@@ -154,16 +154,8 @@ namespace Identity
             var configContext = serviceScope.ServiceProvider
                 .GetRequiredService<ConfigurationDbContext>();
 
-            try
-            {
-                persistedContext.Database.Migrate();
-                configContext.Database.Migrate();
-            }
-            catch (SqlException exception) when (exception.ErrorCode == 1801)
-            {
-                Log.Warning("Database exists, skip initialization");
-                throw;
-            }
+            persistedContext.Database.Migrate();
+            configContext.Database.Migrate();
 
             if (!configContext.Clients.Any())
             {

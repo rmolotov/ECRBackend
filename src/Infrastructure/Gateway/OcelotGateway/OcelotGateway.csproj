@@ -20,4 +20,8 @@
       <PackageReference Include="Ocelot.Provider.Kubernetes" Version="24.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Shared\Shared.Identity\Shared.Identity.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -4,6 +4,7 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Cache.CacheManager;
 using Ocelot.Provider.Kubernetes;
+using Shared.Identity.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ builder.Services
     })
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = builder.Configuration.GetValue<string>("IdentityUri");
+        options.Authority = builder.Configuration.GetIdentitySettings().Uri;
         options.Audience = "ECR.Web";
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters

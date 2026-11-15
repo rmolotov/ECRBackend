@@ -22,7 +22,7 @@ namespace Identity
             var services = new ServiceCollection();
             services.AddLogging();
             services.AddDbContext<UsersDbContext>(options =>
-               options.UseSqlServer(connectionString));
+               options.UseNpgsql(connectionString));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<UsersDbContext>()

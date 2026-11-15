@@ -9,6 +9,7 @@ COPY ["src/Services/RemoteConfig/RemoteConfig.Api/RemoteConfig.Api.csproj", "Ser
 COPY ["src/Services/RemoteConfig/RemoteConfig.Application/RemoteConfig.Application.csproj", "Services/RemoteConfig/RemoteConfig.Application/"]
 COPY ["src/Services/RemoteConfig/RemoteConfig.Core/RemoteConfig.Core.csproj", "Services/RemoteConfig/RemoteConfig.Core/"]
 COPY ["src/Services/RemoteConfig/RemoteConfig.Persistence/RemoteConfig.Persistence.csproj", "Services/RemoteConfig/RemoteConfig.Persistence/"]
+COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
 RUN dotnet restore "Services/RemoteConfig/RemoteConfig.Api/RemoteConfig.Api.csproj"
 COPY src/ .
 WORKDIR "/src/Services/RemoteConfig/RemoteConfig.Api"

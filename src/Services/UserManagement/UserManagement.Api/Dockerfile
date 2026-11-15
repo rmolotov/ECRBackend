@@ -9,6 +9,7 @@ COPY ["src/Services/UserManagement/UserManagement.Core/UserManagement.Core.cspro
 COPY ["src/Services/UserManagement/UserManagement.Application/UserManagement.Application.csproj", "Services/UserManagement/UserManagement.Application/"]
 COPY ["src/Services/UserManagement/UserManagement.Persistence/UserManagement.Persistence.csproj", "Services/UserManagement/UserManagement.Persistence/"]
 COPY ["src/Services/UserManagement/UserManagement.Api/UserManagement.Api.csproj", "Services/UserManagement/UserManagement.Api/"]
+COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
 RUN dotnet restore "Services/UserManagement/UserManagement.Api/UserManagement.Api.csproj"
 COPY src/ .
 WORKDIR "/src/Services/UserManagement/UserManagement.Api"
