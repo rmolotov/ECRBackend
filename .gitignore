@@ -19,7 +19,7 @@ nupkg/
 *.userosscache
 *.sln.docstates
 
-#Logs
+# Logs
 [Ll]ogs
 .log
 
@@ -38,3 +38,7 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+
+# claude code
+**/.claude/**/*.local.json
+**/.claude/worktrees/
