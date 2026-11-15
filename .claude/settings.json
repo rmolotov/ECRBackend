@@ -2,10 +2,10 @@
   "permissions": {
     "deny": [
       "Read(~/.ssh/**)",
-      "Read(**appsettings*.json)",
-      "Read(**secrets.json)",
+      "Read(**/appsettings*.json)",
+      "Read(**/secrets.json)",
       "Read(./.env)",
-      "Read(.ci/**.env)"
+      "Read(./.ci/*.env)"
     ]
   }
 }

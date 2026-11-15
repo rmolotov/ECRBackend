@@ -188,7 +188,7 @@
 - [ ] В `http-client.env.json` неверные порты и опечатка `RemoteCnfig`.
 - [ ] `.ci/services.env` ссылается на несуществующие сервисы Economy, Inventory, Shop и на Postgres.
 - [ ] Docker-образы без зафиксированных версий (`latest`); `actions/checkout@v3` устарел.
-- [ ] `.claude/config.json` Claude Code не читает — правила должны лежать в `.claude/settings.json`. Шаблон `./*appsettings*.json` покрывает только корень; для вложенных файлов нужен `**/appsettings*.json`.
+- [x] `.claude/config.json` Claude Code не читает — правила должны лежать в `.claude/settings.json`. Шаблон `./*appsettings*.json` покрывает только корень; для вложенных файлов нужен `**/appsettings*.json`. Исправлено: файл переименован в `.claude/settings.json`, шаблоны `**/appsettings*.json`, `**/secrets.json`, `./.ci/*.env`. Проверено в новой сессии: Read вложенного `appsettings*.json` и `.ci/*.env` отклоняется. Правила действуют только на инструмент Read, а `cat` через Bash они не блокируют.
 
 ---
 
