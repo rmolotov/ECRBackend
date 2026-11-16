@@ -1,4 +1,4 @@
-namespace Shared.Identity.Configurations;
+namespace Shared.Api.Configurations;
 
 public static class IdentitySettingsExtensions
 {

@@ -2,9 +2,10 @@ using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
+using Shared.Api.Configurations;
+using Shared.Api.Endpoints;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
-using Shared.Identity.Configurations;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +40,8 @@ builder.Services
     .AddSwaggerGen()
     .AddControllers();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -64,5 +67,7 @@ app
 app
     .MapControllers()
     .RequireAuthorization("ApiScopePolicy");
+
+app.UseDiagnosticEndpoints();
 
 app.Run();

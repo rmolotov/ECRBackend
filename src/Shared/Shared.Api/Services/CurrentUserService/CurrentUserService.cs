@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Shared.Identity.Services.CurrentUserService;
+namespace Shared.Api.Services.CurrentUserService;
 
 public class CurrentUserService(IHttpContextAccessor contextAccessor) : ICurrentUserService
 {

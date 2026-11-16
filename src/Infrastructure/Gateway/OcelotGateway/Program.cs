@@ -4,7 +4,7 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Cache.CacheManager;
 using Ocelot.Provider.Kubernetes;
-using Shared.Identity.Configurations;
+using Shared.Api.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 

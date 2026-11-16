@@ -7,11 +7,12 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["src/Shared/Shared.Api/Shared.Api.csproj", "Shared/Shared.APi/"]
 COPY ["src/Services/UserManagement/UserManagement.Core/UserManagement.Core.csproj", "Services/UserManagement/UserManagement.Core/"]
 COPY ["src/Services/UserManagement/UserManagement.Application/UserManagement.Application.csproj", "Services/UserManagement/UserManagement.Application/"]
 COPY ["src/Services/UserManagement/UserManagement.Persistence/UserManagement.Persistence.csproj", "Services/UserManagement/UserManagement.Persistence/"]
 COPY ["src/Services/UserManagement/UserManagement.Api/UserManagement.Api.csproj", "Services/UserManagement/UserManagement.Api/"]
-COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
+
 RUN dotnet restore "Services/UserManagement/UserManagement.Api/UserManagement.Api.csproj" \
     /clp:ErrorsOnly
 COPY src/ .

@@ -40,7 +40,7 @@
     <ProjectReference Include="..\..\..\Services\UserManagement\UserManagement.Application\UserManagement.Application.csproj" />
     <ProjectReference Include="..\..\..\Services\UserManagement\UserManagement.Core\UserManagement.Core.csproj" />
     <ProjectReference Include="..\..\..\Services\UserManagement\UserManagement.Persistence\UserManagement.Persistence.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Shared.Identity\Shared.Identity.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Shared.Api\Shared.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

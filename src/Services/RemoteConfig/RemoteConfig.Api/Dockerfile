@@ -7,11 +7,12 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/RemoteConfig/RemoteConfig.Api/RemoteConfig.Api.csproj", "Services/RemoteConfig/RemoteConfig.Api/"]
-COPY ["src/Services/RemoteConfig/RemoteConfig.Application/RemoteConfig.Application.csproj", "Services/RemoteConfig/RemoteConfig.Application/"]
+COPY ["src/Shared/Shared.Api/Shared.Api.csproj", "Shared/Shared.Api/"]
 COPY ["src/Services/RemoteConfig/RemoteConfig.Core/RemoteConfig.Core.csproj", "Services/RemoteConfig/RemoteConfig.Core/"]
+COPY ["src/Services/RemoteConfig/RemoteConfig.Application/RemoteConfig.Application.csproj", "Services/RemoteConfig/RemoteConfig.Application/"]
 COPY ["src/Services/RemoteConfig/RemoteConfig.Persistence/RemoteConfig.Persistence.csproj", "Services/RemoteConfig/RemoteConfig.Persistence/"]
-COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
+COPY ["src/Services/RemoteConfig/RemoteConfig.Api/RemoteConfig.Api.csproj", "Services/RemoteConfig/RemoteConfig.Api/"]
+
 RUN dotnet restore "Services/RemoteConfig/RemoteConfig.Api/RemoteConfig.Api.csproj" \
     /clp:ErrorsOnly
 COPY src/ .

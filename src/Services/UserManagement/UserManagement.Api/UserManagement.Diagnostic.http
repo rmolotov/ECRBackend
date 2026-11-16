@@ -1,0 +1,4 @@
+@path = diagnostic
+
+### 
+GET {{UserManagement}}/{{path}}/healthcheck

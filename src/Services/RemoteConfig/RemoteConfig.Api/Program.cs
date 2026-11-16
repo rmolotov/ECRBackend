@@ -9,8 +9,9 @@ using RemoteConfig.Application.DI;
 using RemoteConfig.Application.Interfaces;
 using RemoteConfig.Persistence.Caching.Providers;
 using RemoteConfig.Persistence.DI;
+using Shared.Api.Configurations;
+using Shared.Api.Endpoints;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Shared.Identity.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +89,9 @@ builder.Services
     .AddSingleton<ICurrentUserService, CurrentUserService>()
     .AddHttpContextAccessor();
 
+builder.Services
+    .AddHealthChecks();
+
 var app = builder.Build();
 
 app
@@ -109,5 +113,7 @@ app
 
 app
     .MapControllers();
+
+app.UseDiagnosticEndpoints();
 
 app.Run();

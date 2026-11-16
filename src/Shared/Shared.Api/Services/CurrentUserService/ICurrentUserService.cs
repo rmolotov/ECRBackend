@@ -1,4 +1,4 @@
-namespace Shared.Identity.Services.CurrentUserService;
+namespace Shared.Api.Services.CurrentUserService;
 
 public interface ICurrentUserService
 {

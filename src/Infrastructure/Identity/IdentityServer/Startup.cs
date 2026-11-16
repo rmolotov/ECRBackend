@@ -21,7 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Shared.Identity.Configurations;
+using Shared.Api.Configurations;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
 
