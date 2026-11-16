@@ -8,10 +8,9 @@ using RemoteConfig.Application.Stages.Commands.UpdateStage;
 using RemoteConfig.Application.Stages.Queries;
 using RemoteConfig.Application.Stages.Responses;
 
-namespace RemoteConfig.WebApi.Controllers;
+namespace RemoteConfig.Api.Controllers;
 
 [ApiVersionNeutral]
-[AllowAnonymous]
 public class StageController(IMapper mapper) : BaseController
 {
     [AllowAnonymous]

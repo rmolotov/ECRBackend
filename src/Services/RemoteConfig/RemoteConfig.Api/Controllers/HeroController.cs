@@ -8,7 +8,7 @@ using RemoteConfig.Application.Heroes.Commands.UpdateHero;
 using RemoteConfig.Application.Heroes.Queries;
 using RemoteConfig.Application.Heroes.Responses;
 
-namespace RemoteConfig.WebApi.Controllers;
+namespace RemoteConfig.Api.Controllers;
 
 [ApiVersionNeutral]
 public class HeroController(IMapper mapper) : BaseController

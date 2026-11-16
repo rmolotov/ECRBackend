@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Application.Roles.UpdateRole;
 
-namespace UserManagementService.Controllers;
+namespace UserManagementService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

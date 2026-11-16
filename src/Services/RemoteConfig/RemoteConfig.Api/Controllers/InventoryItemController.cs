@@ -8,7 +8,7 @@ using RemoteConfig.Application.InventoryItems.Commands.UpdateInventoryItem;
 using RemoteConfig.Application.InventoryItems.Queries;
 using RemoteConfig.Application.InventoryItems.Responses;
 
-namespace RemoteConfig.WebApi.Controllers;
+namespace RemoteConfig.Api.Controllers;
 
 [ApiVersionNeutral]
 public class InventoryItemController(IMapper mapper) : BaseController

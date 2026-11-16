@@ -2,13 +2,13 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RemoteConfig.Api;
+using RemoteConfig.Api.Services;
 using RemoteConfig.Application.Common.Mappings;
 using RemoteConfig.Application.DI;
 using RemoteConfig.Application.Interfaces;
 using RemoteConfig.Persistence.Caching.Providers;
 using RemoteConfig.Persistence.DI;
-using RemoteConfig.WebApi;
-using RemoteConfig.WebApi.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Shared.Identity.Configurations;
 

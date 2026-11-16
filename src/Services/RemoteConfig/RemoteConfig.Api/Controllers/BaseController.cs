@@ -2,7 +2,7 @@ using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace RemoteConfig.WebApi.Controllers;
+namespace RemoteConfig.Api.Controllers;
 
 [ApiController]
 [Produces("application/json")]

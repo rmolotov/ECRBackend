@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace RemoteConfig.WebApi;
+namespace RemoteConfig.Api;
 
 public class SwaggerConfigureOptions(IApiVersionDescriptionProvider provider) : IConfigureOptions<SwaggerGenOptions>
 {

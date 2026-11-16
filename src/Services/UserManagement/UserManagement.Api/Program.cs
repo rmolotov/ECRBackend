@@ -52,9 +52,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
+    IdentityModelEventSource.ShowPII = true;
 }
-
-IdentityModelEventSource.ShowPII = true;
 
 app
     .UseRouting()

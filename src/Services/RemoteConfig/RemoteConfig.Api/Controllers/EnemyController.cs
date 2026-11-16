@@ -8,7 +8,7 @@ using RemoteConfig.Application.Enemies.Commands.UpdateEnemy;
 using RemoteConfig.Application.Enemies.Queries;
 using RemoteConfig.Application.Enemies.Responses;
 
-namespace RemoteConfig.WebApi.Controllers;
+namespace RemoteConfig.Api.Controllers;
 
 [ApiVersionNeutral]
 public class EnemyController(IMapper mapper) : BaseController

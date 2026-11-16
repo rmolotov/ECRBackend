@@ -5,7 +5,7 @@ using UserManagement.Application.Users.Commands.CreateUser;
 using UserManagement.Application.Users.Commands.UpdateUser;
 using UserManagement.Core.Entities;
 
-namespace UserManagementService.Controllers;
+namespace UserManagementService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

@@ -1,10 +1,10 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-WORKDIR /app
-# AddDeveloperSigningCredential writes tempkey.jwk to the working directory
-RUN chown $APP_UID /app
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
+RUN apk add --no-cache icu-libs
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 USER $APP_UID
+WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Infrastructure/Identity/IdentityServer/IdentityServer.csproj", "Infrastructure/Identity/IdentityServer/"]

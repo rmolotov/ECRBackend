@@ -1,21 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>false</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>UserManagementService</RootNamespace>
+        <RootNamespace>UserManagementService.Api</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.15" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.14.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
@@ -23,15 +22,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\..\..\..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\..\..\..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\UserManagement.Application\UserManagement.Application.csproj" />
-      <ProjectReference Include="..\UserManagement.Persistence\UserManagement.Persistence.csproj" />
-      <ProjectReference Include="..\..\..\Shared\Shared.Identity\Shared.Identity.csproj" />
+        <ProjectReference Include="..\UserManagement.Application\UserManagement.Application.csproj" />
+        <ProjectReference Include="..\UserManagement.Persistence\UserManagement.Persistence.csproj" />
+        <ProjectReference Include="..\..\..\Shared\Shared.Identity\Shared.Identity.csproj" />
     </ItemGroup>
 
 </Project>

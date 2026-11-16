@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using RemoteConfig.Application.Interfaces;
 
-namespace RemoteConfig.WebApi.Services;
+namespace RemoteConfig.Api.Services;
 
 public class CurrentUserService(IHttpContextAccessor contextAccessor) : ICurrentUserService
 {
