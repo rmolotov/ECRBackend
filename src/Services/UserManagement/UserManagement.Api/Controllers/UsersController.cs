@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using UserManagement.Core.Entities;
 namespace UserManagementService.Api.Controllers;
 
 [ApiController]
+[ApiVersion("1")]
 [Route("api/[controller]")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class UsersController(UserManager<ApplicationUser> userManager) : ControllerBase

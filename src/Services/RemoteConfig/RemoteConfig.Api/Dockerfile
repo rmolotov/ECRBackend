@@ -12,14 +12,22 @@ COPY ["src/Services/RemoteConfig/RemoteConfig.Application/RemoteConfig.Applicati
 COPY ["src/Services/RemoteConfig/RemoteConfig.Core/RemoteConfig.Core.csproj", "Services/RemoteConfig/RemoteConfig.Core/"]
 COPY ["src/Services/RemoteConfig/RemoteConfig.Persistence/RemoteConfig.Persistence.csproj", "Services/RemoteConfig/RemoteConfig.Persistence/"]
 COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
-RUN dotnet restore "Services/RemoteConfig/RemoteConfig.Api/RemoteConfig.Api.csproj"
+RUN dotnet restore "Services/RemoteConfig/RemoteConfig.Api/RemoteConfig.Api.csproj" \
+    /clp:ErrorsOnly
 COPY src/ .
 WORKDIR "/src/Services/RemoteConfig/RemoteConfig.Api"
-RUN dotnet build "./RemoteConfig.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./RemoteConfig.Api.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/build \
+    /clp:ErrorsOnly
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./RemoteConfig.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./RemoteConfig.Api.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/publish  \
+    /p:UseAppHost=false \
+    /clp:ErrorsOnly
 
 FROM base AS final
 WORKDIR /app

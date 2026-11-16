@@ -1,0 +1,65 @@
+services:
+  ecr-infrastructure-identity:
+    image: ecr-infrastructure-identity
+    build:
+      context: .
+      dockerfile: src/Infrastructure/Identity/IdentityServer/Dockerfile
+    env_file: .ci/services.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5001
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "--spider", "http://127.0.0.1:5001/.well-known/openid-configuration" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    ports:
+      - "8080:8080"
+    networks:
+      - ecr-services
+      - common-infrastructure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=ecr-services"
+      - "traefik.http.routers.infrastructure-identity.entryPoints=web"
+      - "traefik.http.routers.infrastructure-identity.rule=Host(`localhost`) && PathPrefix(`/dev/auth`)"
+#     - "traefik.http.routers.infrastructure-identity.tls.certResolver=le"
+      - "traefik.http.services.infrastructure-identity.loadBalancer.server.port=5001"
+      - "traefik.http.middlewares.infrastructure-identity-strip.stripPrefix.prefixes=/dev/auth/"
+      - "traefik.http.routers.infrastructure-identity.middlewares=infrastructure-identity-strip@docker"
+        
+  ecr-infrastructure-gateway:
+    image: ecr-infrastructure-gateway
+    build:
+      context: .
+      dockerfile: src/Infrastructure/Gateway/OcelotGateway/Dockerfile
+    env_file: .ci/services.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5050
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q -S --spider http://127.0.0.1:5050/ 2>&1 | grep -q 'HTTP/'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    ports:
+      - "5050:5050"
+    networks:
+      - ecr-services
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=ecr-services"
+      - "traefik.http.routers.infrastructure-gateway.entryPoints=web"
+      - "traefik.http.routers.infrastructure-gateway.rule=Host(`localhost`) && PathPrefix(`/dev/api`)"
+#     - "traefik.http.routers.infrastructure-gateway.tls.certResolver=le"
+      - "traefik.http.services.infrastructure-gateway.loadBalancer.server.port=5050"
+      - "traefik.http.middlewares.infrastructure-gateway-strip.stripPrefix.prefixes=/dev/api/"
+      - "traefik.http.routers.infrastructure-gateway.middlewares=infrastructure-gateway-strip@docker"
+    
+networks:
+  common-infrastructure:
+    external: true
+  ecr-services:
+    external: true

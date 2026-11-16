@@ -12,14 +12,22 @@ COPY ["src/Services/UserManagement/UserManagement.Application/UserManagement.App
 COPY ["src/Services/UserManagement/UserManagement.Persistence/UserManagement.Persistence.csproj", "Services/UserManagement/UserManagement.Persistence/"]
 COPY ["src/Services/UserManagement/UserManagement.Api/UserManagement.Api.csproj", "Services/UserManagement/UserManagement.Api/"]
 COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
-RUN dotnet restore "Services/UserManagement/UserManagement.Api/UserManagement.Api.csproj"
+RUN dotnet restore "Services/UserManagement/UserManagement.Api/UserManagement.Api.csproj" \
+    /clp:ErrorsOnly
 COPY src/ .
 WORKDIR "/src/Services/UserManagement/UserManagement.Api"
-RUN dotnet build "UserManagement.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "UserManagement.Api.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/build \
+    /clp:ErrorsOnly
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "UserManagement.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "UserManagement.Api.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/publish  \
+    /p:UseAppHost=false \
+    /clp:ErrorsOnly
 
 FROM base AS final
 WORKDIR /app

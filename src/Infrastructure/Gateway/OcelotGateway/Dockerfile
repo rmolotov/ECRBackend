@@ -9,14 +9,22 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Infrastructure/Gateway/OcelotGateway/OcelotGateway.csproj", "Infrastructure/Gateway/OcelotGateway/"]
 COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
-RUN dotnet restore "Infrastructure/Gateway/OcelotGateway/OcelotGateway.csproj"
+RUN dotnet restore "Infrastructure/Gateway/OcelotGateway/OcelotGateway.csproj" \
+    /clp:ErrorsOnly
 COPY src/ .
 WORKDIR "/src/Infrastructure/Gateway/OcelotGateway"
-RUN dotnet build "OcelotGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "OcelotGateway.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/build \
+    /clp:ErrorsOnly
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "OcelotGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "OcelotGateway.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/publish  \
+    /p:UseAppHost=false \
+    /clp:ErrorsOnly
 
 FROM base AS final
 WORKDIR /app

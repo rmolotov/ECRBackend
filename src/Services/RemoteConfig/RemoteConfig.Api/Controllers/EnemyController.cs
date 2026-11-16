@@ -10,7 +10,7 @@ using RemoteConfig.Application.Enemies.Responses;
 
 namespace RemoteConfig.Api.Controllers;
 
-[ApiVersionNeutral]
+[ApiVersion("1")]
 public class EnemyController(IMapper mapper) : BaseController
 {
     [AllowAnonymous]

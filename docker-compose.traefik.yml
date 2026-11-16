@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Moscow
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - ecr-services
+      - common-infrastructure
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "letsencrypt:/letsencrypt"
+    command:
+      - "--api.dashboard=true"
+      - "--log.level=info"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    #      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+    #      - "--entryPoints.web.http.redirections.entrypoint.scheme=https"
+    #      - "--entrypoints.websecure.asDefault=true"
+    
+    #      - "--entrypoints.websecure.http.tls.certresolver=le"
+    #      - "--certificatesresolvers.le.acme.email=rm@ecr.io"
+    #      - "--certificatesresolvers.le.acme.tlschallenge=true"
+    #      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`localhost`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+volumes:
+  letsencrypt:
+
+networks:
+  ecr-services:
+    external: true
+  common-infrastructure:
+    external: true

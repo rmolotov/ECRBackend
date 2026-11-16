@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using UserManagement.Application.Roles.UpdateRole;
 namespace UserManagementService.Api.Controllers;
 
 [ApiController]
+[ApiVersion("1")]
 [Route("api/[controller]")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class RolesController(RoleManager<IdentityRole> roleManager) : ControllerBase

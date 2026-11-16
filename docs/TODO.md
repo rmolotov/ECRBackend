@@ -215,7 +215,7 @@
 docker network create ecr-db && docker network create ecr-services
 # 1. базы данных
 docker-compose -p ecr -f docker-compose.databases.yml -f docker-compose.services.yml \
-  --env-file .ci/services.env up -d ecr-databases-postgres ecr-databases-mongo ecr-databases-redis
+  --env-file .ci/services.env up -d postgres mongo redis
 # 2. сервисы
 docker-compose -p ecr -f docker-compose.databases.yml -f docker-compose.services.yml \
   --env-file .ci/services.env up -d --build ecr-infrastructure-identity ecr-services-usermanagement \

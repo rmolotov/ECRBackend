@@ -12,14 +12,22 @@ COPY ["src/Services/UserManagement/UserManagement.Application/UserManagement.App
 COPY ["src/Services/UserManagement/UserManagement.Core/UserManagement.Core.csproj", "Services/UserManagement/UserManagement.Core/"]
 COPY ["src/Services/UserManagement/UserManagement.Persistence/UserManagement.Persistence.csproj", "Services/UserManagement/UserManagement.Persistence/"]
 COPY ["src/Shared/Shared.Identity/Shared.Identity.csproj", "Shared/Shared.Identity/"]
-RUN dotnet restore "Infrastructure/Identity/IdentityServer/IdentityServer.csproj"
+RUN dotnet restore "Infrastructure/Identity/IdentityServer/IdentityServer.csproj" \
+    /clp:ErrorsOnly
 COPY src/ .
 WORKDIR "/src/Infrastructure/Identity/IdentityServer"
-RUN dotnet build "./IdentityServer.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./IdentityServer.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/build \
+    /clp:ErrorsOnly
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./IdentityServer.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./IdentityServer.csproj"  \
+    -c $BUILD_CONFIGURATION  \
+    -o /app/publish  \
+    /p:UseAppHost=false \
+    /clp:ErrorsOnly
 
 FROM base AS final
 WORKDIR /app
