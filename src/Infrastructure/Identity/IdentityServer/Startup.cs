@@ -21,7 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Shared.Api.Configurations;
+using Shared.Api.Authentication;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
 
@@ -42,9 +42,9 @@ namespace Identity
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityServerConfiguration = Configuration
-                .GetSection(IdentityServerConfiguration.SectionName)
+                .GetSection(IdentityServerConfiguration.WellKnownName)
                 .Get<IdentityServerConfiguration>();
-            services.Configure<IdentityServerConfiguration>(Configuration.GetSection(IdentityServerConfiguration.SectionName));
+            services.Configure<IdentityServerConfiguration>(Configuration.GetSection(IdentityServerConfiguration.WellKnownName));
             
             services.AddControllersWithViews();
             
@@ -69,7 +69,7 @@ namespace Identity
 
                     // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                     options.EmitStaticAudienceClaim = true;
-                    options.IssuerUri = Configuration.GetIdentitySettings().Uri;
+                    options.IssuerUri = IdentityServerConfiguration.Uri;
                 })
                 .AddConfigurationStore(options =>
                 {

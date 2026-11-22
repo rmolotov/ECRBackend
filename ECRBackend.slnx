@@ -25,8 +25,6 @@
   <Folder Name="/Solution Items/">
     <File Path="docs\README.md" />
     <File Path="docs\TODO.md" />
-    <Project Path="docker-compose.dcproj" Type="Docker">
-      <Configuration Solution="Release|Any CPU" Project="Debug|Any CPU" />
-    </Project>
+    <Project Path="docker-compose.dcproj" Type="Docker" />
   </Folder>
 </Solution>

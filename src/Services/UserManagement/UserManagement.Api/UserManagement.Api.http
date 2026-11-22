@@ -13,11 +13,6 @@ run #Get Token Dev
 ### 
 run #Get Token Web
 
-
-###
-GET {{UserManagement}}/HealthCheck
-Authorization: Bearer {{token_dev}}
-
 ### GET Roles
 GET {{UserManagement}}/roles/all
 Authorization: Bearer {{token_dev}}

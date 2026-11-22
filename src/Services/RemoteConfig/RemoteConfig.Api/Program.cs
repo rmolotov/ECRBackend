@@ -1,7 +1,5 @@
 using Asp.Versioning;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using RemoteConfig.Api;
 using RemoteConfig.Api.Services;
 using RemoteConfig.Application.Common.Mappings;
@@ -9,7 +7,7 @@ using RemoteConfig.Application.DI;
 using RemoteConfig.Application.Interfaces;
 using RemoteConfig.Persistence.Caching.Providers;
 using RemoteConfig.Persistence.DI;
-using Shared.Api.Configurations;
+using Shared.Api.Authentication;
 using Shared.Api.Endpoints;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -60,22 +58,9 @@ builder.Services
     .AddSwaggerGen();
 
 // Auth
-builder.Services
-    .AddAuthentication(config =>
-    {
-        config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = builder.Configuration.GetIdentitySettings().Uri;
-        options.Audience = "ECR.Web";
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
-    });
+var identitySettings = builder.Configuration.GetIdentitySettings();
+builder.Services.AddCustomAuthentication(identitySettings);
+
 builder.Services
     .AddAuthorizationBuilder()
     .AddPolicy("ApiScopePolicy", policy =>

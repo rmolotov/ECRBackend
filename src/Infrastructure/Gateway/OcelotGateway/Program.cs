@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Ocelot.Cache.CacheManager;
-using Ocelot.Provider.Kubernetes;
-using Shared.Api.Configurations;
+using Shared.Api.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,22 +20,9 @@ builder.Services
     });
 
 // Auth
-builder.Services
-    .AddAuthentication(config =>
-    {
-        config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = builder.Configuration.GetIdentitySettings().Uri;
-        options.Audience = "ECR.Web";
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
-    });
+var identitySettings = builder.Configuration.GetIdentitySettings();
+builder.Services.AddCustomAuthentication(identitySettings);
+    
 
 // Ocelot
 builder.Services

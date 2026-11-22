@@ -1,73 +1,86 @@
-using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
-using Shared.Api.Configurations;
+using Serilog;
+using Shared.Api.Authentication;
 using Shared.Api.Endpoints;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services
-    .AddDbContext<UsersDbContext>(optionsBuilder =>
-    {
-        optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("UsersConnection"));
-    });
-
-builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<UsersDbContext>()
-    .AddDefaultTokenProviders();
-builder.Services
-    .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-    .AddIdentityServerAuthentication(options =>
-    {
-        options.Authority = builder.Configuration.GetIdentitySettings().Uri;
-        options.RequireHttpsMetadata = false;
-    });
-builder.Services
-    .AddAuthorizationBuilder()
-    .AddPolicy("ApiScopePolicy", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "ECR.Api");
-    });
-
-builder.Services
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen()
-    .AddControllers();
-
-builder.Services.AddHealthChecks();
-
-var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
+try
 {
-    var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-    if (context.Database.GetPendingMigrations().Any())
-        context.Database.Migrate();
-}
+    var builder = WebApplication.CreateBuilder(args);
 
-if (app.Environment.IsDevelopment())
+    builder.Services
+        .AddDbContext<UsersDbContext>(optionsBuilder =>
+        {
+            optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("UsersConnection"));
+        });
+
+    builder.Services
+        .AddIdentity<ApplicationUser, IdentityRole>()
+        .AddEntityFrameworkStores<UsersDbContext>()
+        .AddDefaultTokenProviders();
+
+// Auth
+    var identitySettings = builder.Configuration.GetIdentitySettings();
+    builder.Services.AddCustomAuthentication(identitySettings);
+
+    builder.Services
+        .AddAuthorizationBuilder()
+        .AddPolicy("ApiScopePolicy", policy =>
+        {
+            policy.RequireAuthenticatedUser();
+            policy.RequireClaim("scope", "ECR.Api");
+        });
+
+    builder.Services
+        .AddEndpointsApiExplorer()
+        .AddSwaggerGen()
+        .AddControllers();
+
+    builder.Services.AddHealthChecks();
+
+    var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        if (context.Database.GetPendingMigrations().Any())
+            context.Database.Migrate();
+    }
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        IdentityModelEventSource.ShowPII = true;
+    }
+
+    app
+        .UseRouting()
+        .UseAuthentication()
+        .UseAuthorization();
+
+    app
+        .MapControllers()
+        .RequireAuthorization("ApiScopePolicy");
+
+    app.UseDiagnosticEndpoints();
+
+    app.Run();
+}
+catch (Exception exception)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    
-    IdentityModelEventSource.ShowPII = true;
+    Log.Error(exception.Message);
+    throw;
 }
-
-app
-    .UseRouting()
-    .UseAuthentication()
-    .UseAuthorization();
-
-app
-    .MapControllers()
-    .RequireAuthorization("ApiScopePolicy");
-
-app.UseDiagnosticEndpoints();
-
-app.Run();
+finally
+{
+    await Log.CloseAndFlushAsync();
+}
