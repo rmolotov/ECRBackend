@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using UserManagement.Api.Authorization;
 using UserManagement.Application.Roles.UpdateRole;
+
+using static Shared.Api.Constants.Authentication;
 
 namespace UserManagement.Api.Controllers;
 

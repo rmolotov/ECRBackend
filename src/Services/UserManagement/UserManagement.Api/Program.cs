@@ -4,9 +4,10 @@ using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Shared.Api.Authentication;
 using Shared.Api.Endpoints;
-using UserManagement.Api.Authorization;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
+
+using static Shared.Api.Constants.Authentication;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

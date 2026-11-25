@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using UserManagement.Api.Authorization;
 using UserManagement.Application.Users.Commands.CreateUser;
 using UserManagement.Application.Users.Commands.UpdateUser;
 using UserManagement.Core.Entities;
+
+using static Shared.Api.Constants.Authentication;
 
 namespace UserManagement.Api.Controllers;
 
