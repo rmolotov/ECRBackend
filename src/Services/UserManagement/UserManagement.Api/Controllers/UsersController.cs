@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using UserManagementService.Api.Authorization;
+using UserManagement.Api.Authorization;
 using UserManagement.Application.Users.Commands.CreateUser;
 using UserManagement.Application.Users.Commands.UpdateUser;
 using UserManagement.Core.Entities;
 
-namespace UserManagementService.Api.Controllers;
+namespace UserManagement.Api.Controllers;
 
 [ApiController]
 [ApiVersion("1")]

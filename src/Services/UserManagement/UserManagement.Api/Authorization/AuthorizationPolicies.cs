@@ -1,4 +1,4 @@
-namespace UserManagementService.Api.Authorization;
+namespace UserManagement.Api.Authorization;
 
 public static class AuthorizationPolicies
 {

@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using UserManagementService.Api.Authorization;
+using UserManagement.Api.Authorization;
 using UserManagement.Application.Roles.UpdateRole;
 
-namespace UserManagementService.Api.Controllers;
+namespace UserManagement.Api.Controllers;
 
 [ApiController]
 [ApiVersion("1")]
