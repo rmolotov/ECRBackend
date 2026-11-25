@@ -11,8 +11,6 @@
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
     <PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.2" />
 
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.15" />
-
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -40,7 +38,6 @@
     <ProjectReference Include="..\..\..\Services\UserManagement\UserManagement.Application\UserManagement.Application.csproj" />
     <ProjectReference Include="..\..\..\Services\UserManagement\UserManagement.Core\UserManagement.Core.csproj" />
     <ProjectReference Include="..\..\..\Services\UserManagement\UserManagement.Persistence\UserManagement.Persistence.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Shared.Api\Shared.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

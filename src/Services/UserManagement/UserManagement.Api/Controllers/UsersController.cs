@@ -1,7 +1,8 @@
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using UserManagementService.Api.Authorization;
 using UserManagement.Application.Users.Commands.CreateUser;
 using UserManagement.Application.Users.Commands.UpdateUser;
 using UserManagement.Core.Entities;
@@ -14,18 +15,43 @@ namespace UserManagementService.Api.Controllers;
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class UsersController(UserManager<ApplicationUser> userManager) : ControllerBase
 {
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpGet]
     public async Task<ApplicationUser?> Get(string username)
     {
         return await userManager.FindByNameAsync(username);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.UserScopePolicy)]
+    [HttpGet("me")]
+    public async Task<ActionResult<ApplicationUser>> GetCurrent()
+    {
+        var currentUser = await userManager.GetUserAsync(User);
+
+        return currentUser == null
+            ? NotFound()
+            : currentUser;
+    }
+
+    [Authorize(Policy = AuthorizationPolicies.UserScopePolicy)]
+    [HttpDelete("me")]
+    public async Task<ActionResult<IdentityResult>> RemoveCurrent()
+    {
+        var currentUser = await userManager.GetUserAsync(User);
+
+        return currentUser == null
+            ? NotFound()
+            : await userManager.DeleteAsync(currentUser);
+    }
+
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpGet("all")]
     public IEnumerable<ApplicationUser> GetAll()
     {
         return userManager.Users.AsEnumerable();
     }
     
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpPost]
     public async Task<IdentityResult> Add([FromBody] CreateUserCommand command)
     {
@@ -34,6 +60,7 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
             command.Password);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpPut]
     public async Task<IdentityResult> Update([FromBody] UpdateUserCommand command)
     {
@@ -53,6 +80,7 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
         return await userManager.UpdateAsync(targetUser);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpDelete]
     public async Task<IdentityResult> Remove([FromBody] string userName)
     {
@@ -68,6 +96,7 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
         return await userManager.DeleteAsync(targetUser);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpPut("changePassword")]
     public async Task<IdentityResult> ChangePassword([FromBody] UpdatePasswordCommand command)
     {
@@ -87,6 +116,7 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
         );
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpPut("addRoles")]
     public async Task<IdentityResult> AddRoles([FromBody] UpdateUserRolesCommand command)
     {
@@ -104,6 +134,7 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
             command.RolesNames);
     }
     
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpPut("removeRoles")]
     public async Task<IdentityResult> RemoveRoles([FromBody] UpdateUserRolesCommand command)
     {

@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>false</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>UserManagementService.Api</RootNamespace>
+        <RootNamespace>UserManagement.Api</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

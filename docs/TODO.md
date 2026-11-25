@@ -89,7 +89,6 @@
 | Traefik | `traefik:latest` | Обратный прокси, Let's Encrypt (TLS-ALPN), basic auth на дашборд |
 | Nexus | `sonatype/nexus3:latest` | Реестр пакетов и образов (`.ci/nexus.yml`) |
 | GitHub Actions runner | `actions-runner:2.319.1`, self-hosted | Деплой — `docker compose up` прямо на сервере |
-| Google OAuth | — | `AddGoogle` подключён с заглушками вместо ClientId и ClientSecret |
 
 ### NuGet-пакеты
 
@@ -117,12 +116,14 @@
 ### 🔴 Критичные (безопасность)
 
 - [ ] **S1. Секреты закоммичены в git.**
-  - `src/Infrastructure/Identity/IdentityServer/tempkey.jwk` — приватный RSA-ключ подписи токенов. Кто его знает, может выпустить любой JWT.
+  - [x] ~~`tempkey.jwk` — приватный RSA-ключ подписи токенов.~~ Неактуально: IS подписывает токены симметричным ключом (HS256) из конфигурации, `AddDeveloperSigningCredential` убран, jwks пустой — старый RSA-ключ никем не принимается. Файл удалён.
   - Секрет клиента `Client.Api` лежит в `Config.cs:35` и в `http-client.private.env.json`.
     - [x] Правило в `.gitignore` исправлено на `**/http-client.private.env.json`.
-    - [ ] Убрать файл из индекса: `git rm --cached src/Infrastructure/Identity/IdentityServer/http-client.private.env.json`.
+    - [x] Файлы убраны из индекса (`git rm --cached`): `http-client.private.env.json`, `.ci/databases.env`, `.ci/services.env`. Правила `.gitignore` на уже отслеживаемые файлы не действуют. Шаблон `./.env` заменён на `/.env`.
+    - [ ] Секреты остаются в истории git — ротировать и при необходимости вычистить историю.
+    - [ ] `.ci/*.env` нужны compose (`env_file`) — на сервере/в CI их надо доставлять отдельно (secrets), в репозиторий можно положить шаблон `*.env.example`.
   - `.ci/databases.env` и `.ci/services.env` содержат пароли `sa` и Postgres, а также строки подключения.
-  - Что сделать: ротировать ключ и секреты, вычистить историю (`git filter-repo`), передавать через secrets/env, использовать нормальный ключ подписи вместо `AddDeveloperSigningCredential`.
+  - Что сделать: ротировать секреты, вычистить историю (`git filter-repo`), передавать через secrets/env. ~~Нормальный ключ подписи вместо `AddDeveloperSigningCredential`~~ — сделано.
 - [ ] **S2. Изменять этапы (Stage) может кто угодно без авторизации.** В `StageController.cs:14` атрибут `[AllowAnonymous]` висит на классе и отменяет `[Authorize]` на POST, PUT и DELETE. Компилятор предупреждает об этом (ASP0026). **Подтверждено в Docker:** `POST`/`DELETE /api/1.0/Stage` без токена → 201 / 204 (для сравнения `POST /api/1.0/Hero` → 401).
 - [ ] **S3. В Docker-конфигурации Gateway не проверяет авторизацию.** В `Ocelot.Docker.json` нет `AuthenticationOptions` ни на одном маршруте. Сервисы 5002 и 5003 опубликованы на хост в обход gateway.
 - [ ] **S4. Базы данных доступны снаружи.** PostgreSQL, Mongo и Redis публикуют порты на хост и не защищены паролями (кроме PostgreSQL со слабым паролем `postgres`). Деплой идёт на `[self-hosted, cloud]`, поэтому на публичном сервере базы, скорее всего, видны из интернета (порты на сервере не проверялись).
@@ -131,6 +132,9 @@
   - `CreateUserCommand.User` принимает `ApplicationUser` из тела запроса (mass assignment): можно выставить `EmailConfirmed`, `Id`, `LockoutEnabled`.
   - Ролевой модели нет: любой токен со скоупом `ECR.Api` управляет всеми пользователями и ролями.
   - `IdentityModelEventSource.ShowPII = true` включён безусловно.
+  - [ ] Сделать DTO ответа для эндпоинтов пользователей (`Get`, `GetAll`, `GET users/me`) — сейчас наружу уходят `passwordHash`, `securityStamp`, `concurrencyStamp`.
+  - [ ] `users/me` с токеном `Client.Api`/`Client.Dev`: оба клиента имеют скоуп `ECR.Web`, проходят `UserScopePolicy` и получают 404 (в токене нет `sub`). Требовать `sub` в `UserScopePolicy` → 403, либо убрать `ECR.Web` у сервисных клиентов.
+  - [ ] `PUT users/me` («Reset Current User» в коллекции) не реализован — определить, что делает сброс.
 - [ ] **S6. `Client.Web` использует Resource Owner Password Credentials без секрета.** Грант исключён из OAuth 2.1. Для мобильного клиента — Authorization Code + PKCE.
 
 ### 🟠 Ошибки, которые ломают сборку и запуск
@@ -147,7 +151,7 @@
   - [x] `RemoteConfig.Api/appsettings.Docker.json`: хост Mongo `configsdb` → `ecr-databases-mongo`. Без этого все запросы падали с 500 после 30 с ожидания сервера. Код читает `DatabaseSettings:ConnectionString`, поэтому `ConnectionStrings__RemoteConfig` из `services.env` не применяется — env-ключ стоит привести к коду.
   - [x] `.ci/services.env` задаёт `IdentitySettings__Uri`, а код читает `IdentityUri`. Исправлено: все сервисы читают секцию `IdentitySettings` через `Shared.Identity` (`GetIdentitySettings()`), ключ `IdentityUri` в appsettings заменён на `IdentitySettings:Uri`. Оставлено для `Shared.Identity`; там тоже расхождение: секция в коде `IdentityConfiguration`, в env — `IdentitySettings`.
 - [ ] **B7. IdentityServer за Traefik.** Traefik отрезает префикс `/dev/auth`, а `UseForwardedHeaders`/`UsePathBase` не настроены. Discovery-документ отдаст адреса без префикса, внешние клиенты не найдут эндпоинты. `IssuerUri` зафиксирован на внутреннем адресе — валидация issuer у внешних клиентов тоже может не пройти.
-- [ ] **B8. Ключ разработчика в контейнере.** Подтверждено: Identity падал с `Access to the path '/app/tempkey.jwk' is denied`; в Dockerfile выдано право записи в `/app`, пересоздание ключа при деплое остаётся. `AddDeveloperSigningCredential()` пишет `tempkey.jwk` в `/app`; образ запускается от `$APP_UID`, у которого может не быть права записи. В любом случае ключ пересоздаётся при каждом деплое, и выданные ранее токены перестают проходить проверку.
+- [x] **B8. Ключ разработчика в контейнере.** Неактуально: `AddDeveloperSigningCredential` убран, ключ подписи берётся из конфигурации (`IdentityServerConfiguration:IssuerSigningKey`), в `/app` ничего не пишется.
 - [x] **B9. Маршруты Ocelot для Development были скопированы с ошибками.** UserManagement вёл на порт RemoteConfig (7219) и путь `/api/v1`. Исправлено в `Ocelot.Development.json` и `Ocelot.json`: `/UserManagement/{everything}` → `https://localhost:5003/api/{everything}`.
 - [ ] **B10. `/HealthCheck` в RemoteConfig недоступен (404).** У контроллера нет версии, а API-версионирование без `AssumeDefaultVersionWhenUnspecified` не пускает к нему запрос. Пометить контроллер `[ApiVersionNeutral]` или перейти на `MapHealthChecks`.
 - [x] **B11. Traefik выбирал не ту сеть.** Gateway и Identity состоят в двух сетях, а метки `traefik.docker.network` не было — Traefik взял IP из `ecr-db`, в которой сам не состоит, и запросы через `localhost/dev/api` висели до таймаута. Исправлено: в `docker-compose.services.yml` добавлена метка `traefik.docker.network=ecr-services`.
@@ -162,9 +166,9 @@
 - [ ] **`InitializeDatabase` в Identity (`Startup.cs`).**
   - Используется `SqlException.ErrorCode == 1801`, а `ErrorCode` — HRESULT; номер ошибки лежит в `Number`.
   - `catch` всё равно делает `throw`, поэтому ничего не перехватывает.
-  - Сид выполняется, только если таблица пустая — изменения в `Config.cs` в существующую БД не попадут.
+  - [x] ~~Сид выполняется, только если таблица пустая~~ — теперь клиенты, ресурсы и скоупы из конфигурации пересоздаются при каждом старте.
 - [ ] **Текущая ветка `fix/identity-settings`.**
-  - `IdentityServerConfiguration` читается из конфигурации, но нигде не используется; секции в appsettings нет. При загрузке клиентов из конфига секреты нужно хешировать через `CreateClientSecret`.
+  - [x] ~~`IdentityServerConfiguration` не используется~~ — используется: issuer, ресурсы, скоупы, секреты клиентов (хешируются через `CreateClientSecret`), ключ подписи.
   - `CustomCorsPolicyService` при каждом CORS-запросе загружает все origins из БД, достаёт контекст через `RequestServices` вместо DI, у логгера чужая категория `ILogger<DefaultCorsPolicyService>`.
   - `CustomClientConfigurationValidator` вызывает `CreateDomainUri`; для некорректного origin бросит `UriFormatException` вместо `SetError`.
 - [ ] **Зависимости.**
@@ -195,7 +199,7 @@
 ## 4. Приоритеты
 
 1. **Срочно:** S1 (ротировать ключ и секреты, вычистить историю), S2, S3, S4, S5.
-2. **Чтобы проект собирался и деплоился:** ~~B1~~, B2, B3, B3a, ~~B6~~, B7, B8, B10, ~~B11~~.
+2. **Чтобы проект собирался и деплоился:** ~~B1~~, B2, B3, B3a, ~~B6~~, B7, ~~B8~~, B10, ~~B11~~.
 3. **Стратегически:**
    - Заменить IdentityServer4 на **Duende IdentityServer** (нужна лицензия) или **OpenIddict** (бесплатный).
    - Перейти с ROPC на Authorization Code + PKCE.

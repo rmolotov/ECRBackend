@@ -4,13 +4,15 @@
 
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using IdentityServer;
 using IdentityServer.Configuration;
 using IdentityServer.Services.CorsPolicy;
-using IdentityServer4;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer4.Models;
 using IdentityServer4.Services;
+using IdentityServer4.Stores;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,8 +22,8 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Shared.Api.Authentication;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
 
@@ -59,7 +61,7 @@ namespace Identity
                 .AddEntityFrameworkStores<UsersDbContext>()
                 .AddDefaultTokenProviders();
 
-            var builder = services
+            services
                 .AddIdentityServer(options =>
                 {
                     options.Events.RaiseErrorEvents = true;
@@ -69,7 +71,7 @@ namespace Identity
 
                     // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                     options.EmitStaticAudienceClaim = true;
-                    options.IssuerUri = IdentityServerConfiguration.Uri;
+                    options.IssuerUri = IdentityServerConfiguration.IssuerUri;
                 })
                 .AddConfigurationStore(options =>
                 {
@@ -97,21 +99,15 @@ namespace Identity
                 })
                 .AddAspNetIdentity<ApplicationUser>();
 
-            // not recommended for production - you need to store your key material somewhere secure
-            builder.AddDeveloperSigningCredential();
-
-            services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                    
-                    // register your IdentityServer with Google at https://console.developers.google.com
-                    // enable the Google+ API
-                    // set the redirect URI to https://localhost:5001/signin-google
-                    options.ClientId = "copy client ID from Google here";
-                    options.ClientSecret = "copy client secret from Google here";
-                });
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IdentityServerConfiguration.IssuerSigningKey));
             
+            services.AddSingleton<ISigningCredentialStore>(
+                new InMemorySigningCredentialsStore(new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)));
+            services.AddSingleton<IValidationKeysStore>(
+                new InMemoryValidationKeysStore([
+                    new SecurityKeyInfo { Key = signingKey, SigningAlgorithm = SecurityAlgorithms.HmacSha256 }
+                ]));
+
             // Add custom CORS PolicyService and Validator
             services
                 .AddTransient<ICorsPolicyService, CustomCorsPolicyService>()
@@ -120,7 +116,7 @@ namespace Identity
 
         public void Configure(IApplicationBuilder app)
         {
-            InitializeDatabase(app); // uncomment for add migrations and scopes/clients to ext db
+            InitializeDatabase(app);
             
             if (Environment.IsDevelopment())
             {
@@ -143,11 +139,11 @@ namespace Identity
         private void InitializeDatabase(IApplicationBuilder app)
         {
             Log.Information("Database initialization...");
-            
+
             using var serviceScope = app.ApplicationServices
-                .GetService<IServiceScopeFactory>()
+                .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
-            
+
             var persistedContext = serviceScope.ServiceProvider
                 .GetRequiredService<PersistedGrantDbContext>();
 
@@ -157,29 +153,38 @@ namespace Identity
             persistedContext.Database.Migrate();
             configContext.Database.Migrate();
 
-            if (!configContext.Clients.Any())
+            // Configuration (appsettings) is the source of truth: configured entries are re-created on every start,
+            // so changes of secrets, scopes and resources are applied to already initialized database.
+            using var transaction = configContext.Database.BeginTransaction();
+
+            foreach (var client in Config.GetClients(IdentityServerConfiguration))
             {
-                foreach (var client in Config.Clients) 
-                    configContext.Clients.Add(client.ToEntity());
-                    
-                configContext.SaveChanges();
+                configContext.Clients.Where(c => c.ClientId == client.ClientId).ExecuteDelete();
+                configContext.Clients.Add(client.ToEntity());
             }
 
-            if (!configContext.IdentityResources.Any())
+            foreach (var resource in Config.GetIdentityResources(IdentityServerConfiguration))
             {
-                foreach (var resource in Config.IdentityResources) 
-                    configContext.IdentityResources.Add(resource.ToEntity());
-                    
-                configContext.SaveChanges();
+                configContext.IdentityResources.Where(r => r.Name == resource.Name).ExecuteDelete();
+                configContext.IdentityResources.Add(resource.ToEntity());
             }
 
-            if (!configContext.ApiScopes.Any())
+            foreach (var scope in Config.GetApiScopes(IdentityServerConfiguration))
             {
-                foreach (var resource in Config.ApiScopes) 
-                    configContext.ApiScopes.Add(resource.ToEntity());
-                    
-                configContext.SaveChanges();
+                configContext.ApiScopes.Where(s => s.Name == scope.Name).ExecuteDelete();
+                configContext.ApiScopes.Add(scope.ToEntity());
             }
+
+            foreach (var resource in Config.GetApiResources(IdentityServerConfiguration))
+            {
+                configContext.ApiResources.Where(r => r.Name == resource.Name).ExecuteDelete();
+                configContext.ApiResources.Add(resource.ToEntity());
+            }
+
+            configContext.SaveChanges();
+            transaction.Commit();
+
+            Log.Information("Database initialized");
         }
     }
 }

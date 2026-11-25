@@ -1,7 +1,8 @@
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using UserManagementService.Api.Authorization;
 using UserManagement.Application.Roles.UpdateRole;
 
 namespace UserManagementService.Api.Controllers;
@@ -12,24 +13,28 @@ namespace UserManagementService.Api.Controllers;
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class RolesController(RoleManager<IdentityRole> roleManager) : ControllerBase
 {
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpGet]
     public async Task<IdentityRole?> Get(string roleName)
     {
         return await roleManager.FindByNameAsync(roleName);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpGet("all")]
     public IEnumerable<IdentityRole> GetAll()
     {
         return roleManager.Roles.AsEnumerable();
     }
     
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpPost]
     public async Task<IdentityResult> Add([FromBody] string roleName)
     {
         return await roleManager.CreateAsync(new IdentityRole(roleName));
     }
     
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpPut]
     public async Task<IdentityResult> Update([FromBody] UpdateRoleCommand command)
     {
@@ -47,6 +52,7 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
         return await roleManager.UpdateAsync(targetRole);
     }
     
+    [Authorize(Policy = AuthorizationPolicies.ApiScopePolicy)]
     [HttpDelete]
     public async Task<IdentityResult> Remove([FromBody] string roleName)
     {

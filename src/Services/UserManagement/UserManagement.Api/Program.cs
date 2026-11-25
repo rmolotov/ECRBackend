@@ -6,6 +6,7 @@ using Shared.Api.Authentication;
 using Shared.Api.Endpoints;
 using UserManagement.Core.Entities;
 using UserManagement.Persistence.Database;
+using UserManagementService.Api.Authorization;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -32,10 +33,15 @@ try
 
     builder.Services
         .AddAuthorizationBuilder()
-        .AddPolicy("ApiScopePolicy", policy =>
+        .AddPolicy(AuthorizationPolicies.ApiScopePolicy, policy =>
         {
             policy.RequireAuthenticatedUser();
-            policy.RequireClaim("scope", "ECR.Api");
+            policy.RequireClaim("scope", AuthorizationPolicies.ApiScope);
+        })
+        .AddPolicy(AuthorizationPolicies.UserScopePolicy, policy =>
+        {
+            policy.RequireAuthenticatedUser();
+            policy.RequireClaim("scope", AuthorizationPolicies.UserScope);
         });
 
     builder.Services
@@ -67,9 +73,7 @@ try
         .UseAuthentication()
         .UseAuthorization();
 
-    app
-        .MapControllers()
-        .RequireAuthorization("ApiScopePolicy");
+    app.MapControllers();
 
     app.UseDiagnosticEndpoints();
 
