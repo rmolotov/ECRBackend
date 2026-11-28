@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(**/secrets.json)",
+      "Read(./.env)",
+      "Read(./.ci/*.env)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true
+  }
+}

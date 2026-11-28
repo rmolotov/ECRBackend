@@ -1,27 +1,27 @@
 services:
-  ecr-databases-mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: ecr-databases-mssql
+  postgres:
+    image: postgres:18
+    container_name: postgres
     env_file: .ci/databases.env
     environment:
-      ACCEPT_EULA: "Y"
+      POSTGRES_USER: postgres
     restart: always
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -C -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
-      timeout: 10s
+      timeout: 5s
       retries: 5
       start_period: 10s
     volumes:
-      - mssql_data:/var/opt/mssql
+      - postgres_data:/var/lib/postgresql
     ports:
-      - "1433:1433"
+      - "5432:5432"
     networks:
-      - ecr-db
+      - common-infrastructure
     
-  ecr-databases-mongo:
+  mongo:
     image: mongo
-    container_name: ecr-databases-mongo
+    container_name: mongo
     env_file: .ci/databases.env
     restart: always
     healthcheck:
@@ -35,11 +35,11 @@ services:
     volumes:
       - mongo_data:/data/db
     networks:
-      - ecr-db
+      - common-infrastructure
     
-  ecr-databases-redis:
+  redis:
     image: redis
-    container_name: ecr-databases-redis
+    container_name: redis
     env_file: .ci/databases.env
     restart: always
     healthcheck:
@@ -51,12 +51,12 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - ecr-db
+      - common-infrastructure
 
 volumes:
   mongo_data:
-  mssql_data:
+  postgres_data:
     
 networks:
-  ecr-db:
+  common-infrastructure:
     external: true

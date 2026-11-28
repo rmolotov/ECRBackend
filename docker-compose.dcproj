@@ -12,7 +12,9 @@
     
     <ItemGroup>
         <None Include="docker-compose.databases.yml" />
+        <None Include="docker-compose.infrastructure.yml" />
         <None Include="docker-compose.services.yml" />
+        <None Include="docker-compose.traefik.yml" />
     </ItemGroup>
     
     <ItemGroup>
@@ -23,4 +25,5 @@
         <None Include=".ci\traefik.yml" />
         <None Include=".ci\traefik-debug.yml" />
     </ItemGroup>
+    
 </Project>

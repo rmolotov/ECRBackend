@@ -6,7 +6,6 @@ project.lock.json
 nupkg/
 
 # IDE files
-Infrastructure/Identity/http-client.private.env.json
 .idea/
 .vs/
 .vscode/
@@ -19,7 +18,7 @@ Infrastructure/Identity/http-client.private.env.json
 *.userosscache
 *.sln.docstates
 
-#Logs
+# Logs
 [Ll]ogs
 .log
 
@@ -38,3 +37,14 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+
+# claude code
+**/.claude/**/*.local.json
+**/.claude/worktrees/
+
+# Secrets
+# NB: .gitignore does not affect already tracked files - remove them from index with `git rm --cached <file>`
+**/http-client.private.env.json
+**/secrets.json
+/.env
+/.ci/*.env
